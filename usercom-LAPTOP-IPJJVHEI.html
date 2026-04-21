@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Complaints</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+    .container { width: 50%; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 0 10px gray; border-radius: 10px; }
+    input, select, textarea, button { width: 100%; margin-top: 10px; padding: 10px; font-size: 14px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>User Complaint Box</h2>
+<
+  form id="complaintForm" onsubmit="submitComplaint(event)">
+    <input type="text" id="customerId" readonly>
+    <input type="text" id="customerName" readonly>
+
+    <select id="complaintCategory" required>
+      <option disabled selected value="">-- Select Complaint Type --</option>
+      <option value="No Signal / Channel Not Working">No Signal</option>
+      <option value="Poor Picture or Sound Quality">Poor Quality</option>
+      <option value="Billing or Payment Issues">Billing Issue</option>
+    </select>
+
+    <textarea id="complaintDetails" placeholder="Describe your complaint..." required></textarea>
+    <button type="submit">Submit Complaint</button>
+  </form>
+
+  <h3>Your Complaints:</h3>
+  <table>
+    <thead><tr><th>Complaint</th><th>Status</th></tr></thead>
+    <tbody id="complaintsList"></tbody>
+  </table>
+</div>
+
+<script>
+  async function getUser() {
+    const res = await fetch('/get-logged-in-user');
+    const user = await res.json();
+    document.getElementById('customerId').value = user.customerId;
+    document.getElementById('customerName').value = user.name;
+  }
+
+  async function submitComplaint(event) {
+    event.preventDefault();
+    const data = {
+      complaintCategory: document.getElementById('complaintCategory').value,
+      complaintText: document.getElementById('complaintDetails').value
+    };
+    await fetch('/submit-complaint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    loadComplaints();
+    document.getElementById('complaintDetails').value = '';
+  }
+
+  async function loadComplaints() {
+    const res = await fetch('/get-complaints');
+    const complaints = await res.json();
+    document.getElementById('complaintsList').innerHTML =
+      complaints.map(c => `<tr><td>${c.complaintText}</td><td>${c.status}</td></tr>`).join('');
+  }
+
+  getUser();
+  loadComplaints();
+</script>
+
+</body>
+</html>
