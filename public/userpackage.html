@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DTH Package Selection</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+ body { 
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 240px;
+  background: rgba(38, 24, 66, 0.97);
+  color: #e0e6f3;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  box-shadow: 2px 0 18px #6bd1e933;
+  z-index: 10;
+  transition: width 0.3s;
+}
+
+.sidebar h2 {
+  text-align: center;
+  padding: 28px 0 22px 0;
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #6bd1e933;
+  text-shadow: 0 0 10px #6bd1e944;
+}
+
+.sidebar h2 i {
+  margin-right: 10px;
+  color: #a16be9;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  border-bottom: 1px solid #3a2a6a;
+}
+
+.sidebar ul li a {
+  color: #e0e6f3;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 15px 24px;
+  font-size: 1.08rem;
+  border-radius: 8px 20px 20px 8px;
+  transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+  position: relative;
+}
+
+.sidebar ul li a i {
+  margin-right: 14px;
+  font-size: 1.18rem;
+  color: #6bd1e9;
+  min-width: 22px;
+  text-align: center;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a:focus {
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  box-shadow: 0 4px 18px #a16be955;
+  outline: none;
+}
+
+.sidebar ul li a:hover i,
+.sidebar ul li a:focus i {
+  color: #2e1a47;
+}
+
+.sidebar ul li:last-child {
+  border-bottom: none;
+}
+
+/* Main Container Styling */
+.container {
+  max-width: 600px;
+  margin: 40px auto 40px 270px;
+  background: rgba(255,255,255,0.97);
+  padding: 36px 28px 30px 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #6bd1e955, 0 0 0 2px #a16be933;
+}
+
+h2 {
+  text-align: center;
+  color: #6bd1e9;
+  font-size: 2rem;
+  letter-spacing: 1.2px;
+  margin-bottom: 28px;
+  text-shadow: 0 0 8px #6bd1e955;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: #3a2a6a;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+select,
+input[type="text"],
+input[type="number"],
+input[type="date"] {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #6bd1e988;
+  background: rgba(107,209,233,0.08);
+  color: #2e1a47;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 3px;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.2s;
+}
+
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+  border-color: #a16be9;
+  box-shadow: 0 0 10px #a16be9aa;
+  outline: none;
+  background: rgba(107,209,233,0.16);
+}
+
+input[readonly] {
+  background: #e9ecef;
+  color: #333;
+  opacity: 1;
+}
+
+.packs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.pack-card {
+  flex: 1 0 45%;
+  background: linear-gradient(120deg, #e9ecef 70%, #6bd1e91a 100%);
+  border-radius: 10px;
+  padding: 14px 10px 10px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px #a16be911;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.pack-card label {
+  color: #2e1a47;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pack-card input[type="checkbox"] {
+  accent-color: #6bd1e9;
+  margin-right: 8px;
+  transform: scale(1.1);
+}
+
+.pack-card:hover {
+  box-shadow: 0 6px 18px #6bd1e955;
+  transform: translateY(-2px) scale(1.03);
+}
+
+.summary {
+  background: linear-gradient(90deg, #f8f9fa 80%, #6bd1e91a 100%);
+  border-radius: 10px;
+  padding: 18px 14px;
+  margin-top: 20px;
+  color: #3a2a6a;
+  font-size: 1.08rem;
+  box-shadow: 0 2px 8px #6bd1e911;
+}
+
+.btn {
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #271a48;
+  border: none;
+  padding: 12px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.13rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px #6bd1e966;
+  margin-top: 18px;
+  letter-spacing: 1px;
+  transition: background 0.3s, transform 0.18s, box-shadow 0.23s;
+}
+
+.btn:disabled {
+  background: #aaa;
+  color: #fff;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn:hover:not(:disabled),
+.btn:focus:not(:disabled) {
+  background: linear-gradient(90deg, #a16be9 0%, #6bd1e9 100%);
+  color: #fff;
+  transform: scale(1.03) translateY(-2px);
+  box-shadow: 0 8px 24px #a16be988;
+  outline: none;
+}
+
+#proceedBtn {
+  display: none;
+  margin-top: 14px;
+  width: 100%;
+}
+
+.message {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 1.08rem;
+  min-height: 24px;
+  font-weight: 600;
+}
+
+.message.success {
+  color: #27ae60;
+}
+
+.message.error {
+  color: #e74c3c;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+  }
+  .sidebar h2,
+  .sidebar ul li a span {
+    display: none;
+  }
+  .container {
+    margin-left: 90px;
+    padding: 24px 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .container {
+    max-width: 98vw;
+    padding: 20px 4vw 18px 4vw;
+    border-radius: 12px;
+    margin-left: 0;
+  }
+  .packs-list {
+    gap: 8px;
+  }
+  .pack-card {
+    flex: 1 0 100%;
+    padding: 12px 8px 8px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+    width: 100vw;
+    min-width: 0;
+    height: 60px;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 14px #6bd1e933;
+    z-index: 15;
+  }
+  .sidebar h2 {
+    display: none;
+  }
+  .sidebar ul {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .sidebar ul li {
+    margin: 0;
+    border-bottom: none;
+  }
+  .sidebar ul li a {
+    border-radius: 10px;
+    padding: 0.5rem 0.5rem;
+    font-size: 1.08rem;
+  }
+  .container {
+    margin-left: 0;
+    margin-top: 70px;
+    padding: 1.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 10px 2vw 10px 2vw;
+    border-radius: 8px;
+  }
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: 18px;
+  }
+  .summary {
+    font-size: 0.98rem;
+    padding: 10px 5px;
+  }
+  .btn {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+}
+  </style>
+</head>
+<body>
+
+ <!-- Sidebar -->
+  <div class="sidebar">
+    <h2><i class="fas fa-broadcast-tower"></i>CABLE USER DASHBOARD</h2>
+    <ul>
+      <li><a href="userdashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+      <li><a href="useraccount.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+      <li><a href="userbillings.html"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+      <li><a href="userpackage.html"><i class="fas fa-sliders-h"></i> <span>Packages</span></a></li>
+      <li><a href="viewreceipts.html"><i class="fas fa-receipt"></i> <span>Your Receipts</span></a></li> 
+      <li><a href="usercomplaints.html"><i class="fas fa-comment-dots"></i> <span>Complaint Box</span></a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li> 
+    </ul>
+  </div>
+  <div class="container">
+    <h2>Select Your DTH Package</h2>
+    <form id="dthForm">
+      <!-- Customer Info (readonly) -->
+      <div class="form-group">
+        <label for="customerId">Customer ID</label>
+        <input type="text" id="customerId" name="customerId" readonly>
+      </div>
+      <div class="form-group">
+        <label for="name">Customer Name</label>
+        <input type="text" id="name" name="name" readonly>
+      </div>
+      <!-- Provider -->
+      <div class="form-group">
+        <label for="provider">DTH Provider</label>
+        <select id="provider" required>
+          <option value="">-- Select Provider --</option>
+        </select>
+      </div>
+      <!-- Duration -->
+      <div class="form-group">
+        <label for="duration">Subscription Duration</label>
+        <select id="duration" required>
+          <option value="1">Monthly</option>
+          <option value="3">Quarterly</option>
+          <option value="12">Yearly</option>
+        </select>
+      </div>
+      <!-- Start Date -->
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" id="startDate" name="startDate" required>
+      </div>
+      <!-- End Date -->
+      <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="text" id="endDate" name="endDate" readonly>
+      </div>
+      <!-- Packs -->
+      <div class="form-group">
+        <label>Channel Packs</label>
+        <div class="packs-list" id="packsList"></div>
+      </div>
+      <!-- Summary -->
+      <div class="summary" id="summary"></div>
+      <button type="submit" class="btn">Submit</button>
+      <div class="message" id="formMessage"></div>
+      <button type="button" id="proceedBtn" class="btn">Proceed</button>
+    </form>
+  </div>
+  <script>
+    // Provider and pack data
+    const providers = [
+      { name: "Tata Play", base: 150 },
+      { name: "Airtel Digital TV", base: 160 },
+      { name: "Dish TV", base: 140 },
+      { name: "Sun Direct", base: 130 }
+    ];
+    const packs = [
+      { name: "Basic", price: 50, desc: "All Free-to-Air channels" },
+      { name: "HD Pack", price: 100, desc: "Popular HD channels" },
+      { name: "Sports Pack", price: 60, desc: "All sports channels" },
+      { name: "Kids Pack", price: 30, desc: "Kids entertainment" },
+      { name: "English Movies", price: 40, desc: "Hollywood blockbusters" },
+      { name: "Hindi Movies", price: 35, desc: "Latest Bollywood" },
+      { name: "Regional Pack", price: 25, desc: "Regional language channels" }
+    ];
+
+    // DOM elements
+    const providerEl = document.getElementById('provider');
+    const durationEl = document.getElementById('duration');
+    const packsListEl = document.getElementById('packsList');
+    const summaryEl = document.getElementById('summary');
+    const form = document.getElementById('dthForm');
+    const formMessage = document.getElementById('formMessage');
+    const customerIdEl = document.getElementById('customerId');
+    const nameEl = document.getElementById('name');
+    const startDateEl = document.getElementById('startDate');
+    const endDateEl = document.getElementById('endDate');
+    const proceedBtn = document.getElementById('proceedBtn');
+
+    // Set min start date as today
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    startDateEl.min = todayStr;
+    startDateEl.value = todayStr;
+
+    // Populate providers
+    providers.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = `${p.name} (₹${p.base}/mo)`;
+      providerEl.appendChild(opt);
+    });
+
+    // Populate packs
+    packs.forEach((p, idx) => {
+      const div = document.createElement('div');
+      div.className = 'pack-card';
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${p.name}" data-price="${p.price}">
+          <strong>${p.name}</strong> (₹${p.price}/mo)<br>
+          <small>${p.desc}</small>
+        </label>
+      `;
+      packsListEl.appendChild(div);
+    });
+
+    // Helper: get selected packs
+    function getSelectedPacks() {
+      return Array.from(packsListEl.querySelectorAll('input[type=checkbox]:checked'))
+        .map(cb => ({
+          name: cb.value,
+          price: Number(cb.getAttribute('data-price'))
+        }));
+    }
+
+    // Helper: get selected provider
+    function getSelectedProvider() {
+      const name = providerEl.value;
+      return providers.find(p => p.name === name);
+    }
+
+    // Helper: update summary
+    function updateSummary() {
+      const provider = getSelectedProvider();
+      const duration = Number(durationEl.value);
+      const selectedPacks = getSelectedPacks();
+      const startDate = startDateEl.value;
+      const endDate = endDateEl.value;
+
+      if (!provider) {
+        summaryEl.innerHTML = '<em>Please select a provider.</em>';
+        return;
+      }
+      let packsTotal = selectedPacks.reduce((sum, p) => sum + p.price, 0);
+      let base = provider.base;
+      let total = (base + packsTotal) * duration;
+      let gst = total * 0.18;
+      let grandTotal = total + gst;
+
+      summaryEl.innerHTML = `
+        <strong>Provider:</strong> ${provider.name}<br>
+        <strong>Duration:</strong> ${duration === 1 ? 'Monthly' : duration === 3 ? 'Quarterly' : 'Yearly'}<br>
+        <strong>Packs:</strong> ${selectedPacks.length ? selectedPacks.map(p => p.name).join(', ') : 'None'}<br>
+        <strong>Start Date:</strong> ${startDate ? startDate : '-'}<br>
+        <strong>End Date:</strong> ${endDate ? endDate : '-'}<br>
+        <strong>Total (before GST):</strong> ₹${total}<br>
+        <strong>GST (18%):</strong> ₹${gst.toFixed(2)}<br>
+        <strong>Grand Total:</strong> <span style="color:green">₹${grandTotal.toFixed(2)}</span>
+      `;
+    }
+
+    // Date calculation logic
+    function calculateEndDate() {
+      const startDateStr = startDateEl.value;
+      const duration = parseInt(durationEl.value);
+      if (!startDateStr || !duration) {
+        endDateEl.value = '';
+        return;
+      }
+      const startDate = new Date(startDateStr);
+      // Add months according to duration
+      const endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + duration);
+      // Subtract one day to make end date inclusive
+      endDate.setDate(endDate.getDate() - 1);
+      endDateEl.value = endDate.toISOString().split('T')[0];
+    }
+
+    // Fetch current user info from backend
+    async function fetchUserInfo() {
+      try {
+        const res = await fetch('/getUserDetails', { credentials: 'include' });
+        if (res.ok) {
+          const user = await res.json();
+          customerIdEl.value = user.customerId || '';
+          nameEl.value = user.name || '';
+        } else {
+          customerIdEl.value = '';
+          nameEl.value = '';
+          formMessage.textContent = "Please log in to subscribe.";
+          formMessage.className = "message error";
+        }
+      } catch (err) {
+        customerIdEl.value = '';
+        nameEl.value = '';
+        formMessage.textContent = "Error fetching user info.";
+        formMessage.className = "message error";
+      }
+    }
+
+    // Event listeners
+    providerEl.addEventListener('change', updateSummary);
+    durationEl.addEventListener('change', () => {
+      updateSummary();
+      calculateEndDate();
+    });
+    packsListEl.addEventListener('change', updateSummary);
+    startDateEl.addEventListener('change', calculateEndDate);
+
+    // Initial summary, user info, and end date
+    fetchUserInfo();
+    updateSummary();
+    calculateEndDate();
+
+    // Form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formMessage.textContent = '';
+      formMessage.className = 'message';
+
+      const provider = providerEl.value;
+      const duration = Number(durationEl.value);
+      const selectedPacks = getSelectedPacks();
+      const packsArr = selectedPacks.map(p => p.name);
+      const startDate = startDateEl.value;
+      const endDate = endDateEl.value;
+
+      if (!customerIdEl.value || !nameEl.value) {
+        formMessage.textContent = 'User info not loaded. Please log in.';
+        formMessage.classList.add('error');
+        proceedBtn.style.display = 'none';
+        return;
+      }
+      if (!provider) {
+        formMessage.textContent = 'Please select a provider.';
+        formMessage.classList.add('error');
+        proceedBtn.style.display = 'none';
+        return;
+      }
+      if (!packsArr.length) {
+        formMessage.textContent = 'Please select at least one pack.';
+        formMessage.classList.add('error');
+        proceedBtn.style.display = 'none';
+        return;
+      }
+      if (!startDate || !endDate) {
+        formMessage.textContent = 'Please select a valid start date.';
+        formMessage.classList.add('error');
+        proceedBtn.style.display = 'none';
+        return;
+      }
+
+      // Calculate total (before GST)
+      const providerObj = getSelectedProvider();
+      const packsTotal = selectedPacks.reduce((sum, p) => sum + p.price, 0);
+      const total = String((providerObj.base + packsTotal) * duration);
+
+      // Send to backend (customerId and name are NOT sent, backend gets from session)
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            provider,
+            duration,
+            packs: packsArr,
+            startDate,
+            endDate,
+            total
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          formMessage.textContent = data.message;
+          formMessage.classList.add('success');
+          form.reset();
+          // Reset start date to today and recalculate end date
+          startDateEl.value = todayStr;
+          calculateEndDate();
+          updateSummary();
+          fetchUserInfo(); // reload user info after reset
+          proceedBtn.style.display = 'block';
+        } else {
+          formMessage.textContent = data.message || 'Submission failed.';
+          formMessage.classList.add('error');
+          proceedBtn.style.display = 'none';
+        }
+      } catch (err) {
+        formMessage.textContent = 'Network or server error.';
+        formMessage.classList.add('error');
+        proceedBtn.style.display = 'none';
+      }
+    });
+
+    // Proceed button handler
+    proceedBtn.addEventListener('click', function() {
+      window.location.href = 'userbillings.html';
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All DTH Receipts (Admin)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+  body {
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+    margin: 0;
+    min-height: 100vh;
+    padding-top: 56px; /* Space for navbar */
+  }
+
+  /* ===== NAVBAR STYLES ===== */
+  .navbar {
+    width: 100%;
+    background: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* RIGHT align all navbar items */
+    padding: 0 32px;
+    height: 56px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1002;
+  }
+  .navbar a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0 16px;
+    line-height: 56px;
+    font-size: 1.08rem;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s;
+    border-radius: 6px;
+  }
+  .navbar a:hover {
+    background: #6bd1e9;
+    color: #2e1a47;
+  }
+
+  /* ===== SIDEBAR STYLES ===== */
+  .sidebar {
+    width: 240px;
+    background: rgba(38, 24, 66, 0.97);
+    color: #e0e6f3;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 56px; /* Push below navbar */
+    overflow-y: auto;
+    box-shadow: 2px 0 18px #6bd1e933;
+    z-index: 10;
+    transition: width 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .sidebar h2 {
+    text-align: center;
+    padding: 28px 0 22px 0;
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+    color: #2e1a47;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #6bd1e933;
+    text-shadow: 0 0 10px #6bd1e944;
+    width: 100%;
+  }
+
+  .sidebar h2 i {
+    margin-right: 10px;
+    color: #a16be9;
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  .sidebar ul li {
+    border-bottom: 1px solid #3a2a6a;
+  }
+
+  .sidebar ul li a {
+    color: #e0e6f3;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 15px 24px;
+    font-size: 1.08rem;
+    border-radius: 8px 20px 20px 8px;
+    transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+    position: relative;
+  }
+
+  .sidebar ul li a i {
+    margin-right: 14px;
+    font-size: 1.18rem;
+    color: #6bd1e9;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .sidebar ul li a:hover,
+  .sidebar ul li a:focus {
+    background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+    color: #2e1a47;
+    box-shadow: 0 4px 18px #a16be955;
+    outline: none;
+  }
+
+  .sidebar ul li a:hover i,
+  .sidebar ul li a:focus i {
+    color: #2e1a47;
+  }
+
+  .sidebar ul li:last-child {
+    border-bottom: none;
+  }
+
+  /* Main Content Alignment */
+  .container {
+    max-width: 1200px;
+    margin: 48px auto 32px 270px;
+    background: rgba(255,255,255,0.96);
+    padding: 38px 32px 32px 32px;
+    border-radius: 18px;
+    box-shadow: 0 8px 36px 0 #6bd1e955, 0 0 0 2px #a16be933;
+    animation: fadeIn 1s;
+    min-height: 80vh;
+    width: 100%;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+
+  h2 {
+    text-align: center;
+    color: #6bd1e9;
+    letter-spacing: 1px;
+    margin-bottom: 36px;
+    font-size: 2.1rem;
+    font-weight: 700;
+    text-shadow: 0 2px 16px #a16be955;
+  }
+
+  /* Receipts List Left-Aligned */
+  .receipts-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  /* Receipt Card Styling, Left-Aligned Text */
+  .receipt-card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 16px;
+    box-shadow: 0 6px 28px #6bd1e955, 0 0 0 2px #a16be933;
+    padding: 26px 24px 18px 24px;
+    min-width: 320px;
+    max-width: 370px;
+    flex: 1 1 340px;
+    margin-bottom: 10px;
+    position: relative;
+    border-left: 5px solid #6bd1e9;
+    animation: fadeInCard 0.7s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    text-align: left;
+  }
+
+  .receipt-card:hover {
+    box-shadow: 0 12px 32px #a16be988, 0 0 0 2px #6bd1e966;
+    transform: translateY(-4px) scale(1.03);
+  }
+
+  @keyframes fadeInCard {
+    from { opacity: 0; transform: translateY(30px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+
+  .receipt-header {
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  .receipt-header strong {
+    color: #6bd1e9;
+    font-size: 1.13rem;
+  }
+
+  .receipt-details div {
+    margin: 3px 0;
+    font-size: 1.04rem;
+    color: #2e1a47;
+  }
+
+  .packs-list {
+    margin: 0 0 8px 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .packs-list li {
+    background: #e9ecef;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.98rem;
+    color: #3a2a6a;
+    border: 1px solid #a16be933;
+  }
+
+  .receipt-summary {
+    margin-top: 10px;
+    padding: 8px 0 0 0;
+    border-top: 1px solid #e3e8f0;
+    background: #f8f9fa;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .receipt-summary div {
+    margin: 4px 0;
+    font-size: 1.06rem;
+  }
+
+  .receipt-total {
+    text-align: right;
+    font-size: 1.15rem;
+    color: #a16be9;
+    font-weight: bold;
+    margin-top: 8px;
+    text-shadow: 0 0 8px #6bd1e933;
+  }
+
+  .receipt-date {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    color: #888;
+    font-size: 0.97rem;
+  }
+
+  .no-receipts {
+    text-align: center;
+    color: #e74c3c;
+    font-size: 1.15rem;
+    margin-top: 40px;
+    font-weight: 500;
+    min-height: 28px;
+  }
+
+  .back-btn {
+    display: block;
+    margin: 34px auto 0 auto;
+    background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+    color: #2e1a47;
+    border: none;
+    padding: 12px 34px;
+    border-radius: 8px;
+    font-size: 1.13rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 220px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 4px 14px #6bd1e966;
+    transition: background 0.2s, color 0.2s, transform 0.18s, box-shadow 0.23s;
+  }
+
+  .back-btn:hover {
+    background: linear-gradient(90deg, #a16be9 0%, #6bd1e9 100%);
+    color: #fff;
+    transform: scale(1.03) translateY(-2px);
+    box-shadow: 0 8px 24px #a16be988;
+  }
+
+  @media (max-width: 900px) {
+    body { padding-top: 56px; }
+    .container { padding: 18px 4vw; margin-left: 0; }
+    h2 { font-size: 1.4rem; }
+    .receipts-list { gap: 14px; }
+    .receipt-card { padding: 16px 8px; min-width: 95vw; max-width: 98vw; }
+    .sidebar { position: static; width: 100%; min-height: unset; flex-direction: row; align-items: flex-start; top: 56px; }
+    .sidebar ul { padding: 0 16px; }
+    .sidebar h2 { margin: 16px 0; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 8px 2vw; margin-left: 0; }
+    h2 { font-size: 1.1rem; }
+    .receipts-list { gap: 8px; }
+    .receipt-card { padding: 8px 2vw; min-width: 98vw; max-width: 99vw; }
+    .back-btn { width: 100%; min-width: unset; margin-top: 20px; }
+    .sidebar { flex-direction: column; align-items: flex-start; }
+    .sidebar ul { padding: 0 8px; }
+    .sidebar h2 { margin: 8px 0; }
+    body { padding-top: 56px; }
+    .navbar { padding: 0 8px; }
+  }
+  </style>
+</head>
+<body>
+  
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2><i class="fas fa-broadcast-tower"></i> ADMIN PANEL</h2>
+    <ul>
+      <li><a href="admindashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+      <li><a href="admincustomers.html"><i class="fas fa-users"></i><span>Customers</span></a></li>
+      <li><a href="admincustomerreceipt.html"><i class="fas fa-receipt"></i><span>Customer Receipt</span></a></li>
+      <li><a href="adminpackage.html"><i class="fas fa-box"></i><span>Packages</span></a></li>
+      <li><a href="admincomplaints.html"><i class="fas fa-exclamation-circle"></i><span>Customer Complaint</span></a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <h2>All DTH Customer Receipts (Admin)</h2>
+    <div id="receipts" class="receipts-list"></div>
+    <div id="message" class="no-receipts"></div>
+    <a href="admindashboard.html" class="back-btn">Back to Admin Dashboard</a>
+  </div>
+  <script>
+    function durationText(d) {
+      if (d == 1) return 'Monthly';
+      if (d == 3) return 'Quarterly';
+      if (d == 12) return 'Yearly';
+      return d + ' months';
+    }
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '-';
+      return d.toISOString().substring(0, 10);
+    }
+    function formatCurrency(val) {
+      return '₹' + Number(val).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    async function fetchAllReceipts() {
+      try {
+        const res = await fetch('/api/all-receipts');
+        if (!res.ok) throw new Error('Not authorized or no receipts found');
+        const data = await res.json();
+        const receiptsDiv = document.getElementById('receipts');
+        const msgDiv = document.getElementById('message');
+        receiptsDiv.innerHTML = '';
+        msgDiv.textContent = '';
+
+        if (!data.length) {
+          msgDiv.textContent = 'No receipts found in the system.';
+          return;
+        }
+
+        // Sort by latest first
+        data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        data.forEach(sub => {
+          const total = Number(sub.total || 0);
+          const gst = total * 0.18;
+          const grandTotal = total + gst;
+          const packs = Array.isArray(sub.packs) && sub.packs.length ? sub.packs : ['None'];
+
+          const card = document.createElement('div');
+          card.className = 'receipt-card';
+          card.innerHTML = `
+            <div class="receipt-date">Recharge Date: ${formatDate(sub.createdAt)}</div>
+            <div class="receipt-header">
+              <strong>DTH Subscription Receipt</strong>
+            </div>
+            <div class="receipt-details">
+              <div><strong>Customer ID:</strong> ${sub.customerId || '-'}</div>
+              <div><strong>Name:</strong> ${sub.name || sub.customername || '-'}</div>
+              <div><strong>DTH Provider:</strong> ${sub.provider || '-'}</div>
+              <div><strong>Subscription Duration:</strong> ${durationText(sub.duration)}</div>
+              <div><strong>Start Date:</strong> ${formatDate(sub.startDate)}</div>
+              <div><strong>End Date:</strong> ${formatDate(sub.endDate)}</div>
+              <div><strong>Packs:</strong>
+                <ul class="packs-list">
+                  ${packs.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+            <div class="receipt-summary">
+              <div><strong>Total (before GST):</strong> ${formatCurrency(total)}</div>
+              <div><strong>GST (18%):</strong> ${formatCurrency(gst)}</div>
+            </div>
+            <div class="receipt-total">
+              Grand Total: ${formatCurrency(grandTotal)}
+            </div>
+          `;
+          receiptsDiv.appendChild(card);
+        });
+      } catch (err) {
+        document.getElementById('message').textContent = 'No receipts found or you are not authorized.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchAllReceipts);
+  </script>
+</body>
+</html>

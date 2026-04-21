@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Registration Page</title>
+  <style>
+    body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 60%, #1ca7b8 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* overflow: hidden;  <-- REMOVE THIS LINE */
+}
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('index2img.jpg') no-repeat center center;
+  background-size: cover;
+  opacity: 0.13;
+  z-index: 0;
+}
+.form-container {
+  position: relative;
+  z-index: 1;
+  background: rgba(38, 24, 66, 0.90);
+  padding: 2.5rem 2rem 2rem 2rem;
+  border-radius: 22px;
+  box-shadow:
+    0 6px 32px 0 #6bd1e9aa,
+    0 0 0 2px #6bd1e988;
+  width: 100%;
+  max-width: 420px;
+  backdrop-filter: blur(8px);
+  color: #e0e6f3;
+  animation: fadeInCard 1.1s cubic-bezier(.23,1.04,.52,1) 0.1s both;
+}
+@keyframes fadeInCard {
+  from { opacity: 0; transform: translateY(30px) scale(0.97);}
+  to { opacity: 1; transform: none;}
+}
+h1 {
+  text-align: center;
+  color: #6bd1e9;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  text-shadow:
+    0 0 8px #6bd1e9cc,
+    0 0 16px #6bd1e9aa;
+  margin-bottom: 1.7rem;
+  user-select: none;
+}
+.form-group {
+  margin-bottom: 1.1rem;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #a0d8ef;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #6bd1e988;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.09);
+  color: #2e1a47;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.2s;
+  outline: none;
+  margin-bottom: 2px;
+  box-sizing: border-box;
+}
+textarea {
+  resize: vertical;
+  overflow-y: auto;
+  max-height: 120px;
+  min-height: 50px;
+}
+input:focus, textarea:focus, select:focus {
+  border: 1.5px solid #a16be9;
+  box-shadow: 0 0 8px #a16be9aa;
+  background: rgba(255,255,255,0.18);
+}
+input:valid, textarea:valid, select:valid {
+  border: 2px solid #4CAF50;
+}
+input:invalid, textarea:invalid, select:invalid {
+  border: 2px solid #f44336;
+}
+input, textarea, select {
+  transition: border-color 0.3s ease;
+}
+button {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #271a48;
+  border: none;
+  border-radius: 10px;
+  margin-top: 1.1rem;
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 700;
+  box-shadow: 0 4px 18px #6bd1e966;
+  transition: background 0.3s, transform 0.18s, box-shadow 0.23s;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px #fff4;
+}
+button:hover {
+  background: linear-gradient(90deg, #a16be9 0%, #6bd1e9 100%);
+  color: #fff;
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 8px 32px #a16be988;
+}
+.terms-container {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #a0d8ef;
+  margin-bottom: 0.7rem;
+}
+.terms-container input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  accent-color: #6bd1e9;
+}
+.login-link {
+  text-align: center;
+  margin-top: 1.1rem;
+  font-size: 14px;
+}
+.login-link a {
+  color: #a16be9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.login-link a:hover {
+  color: #6bd1e9;
+  text-decoration: underline;
+}
+.error {
+  color: #ff5f6d;
+  font-size: 13px;
+  min-height: 18px;
+  margin-top: 1px;
+  margin-bottom: 2px;
+}
+/* --- Mobile scroll fix --- */
+@media (max-width: 600px) {
+  body {
+    display: block;
+    min-height: 100vh;
+    height: auto;
+    align-items: initial !important;
+    justify-content: initial !important;
+    overflow-y: auto;
+  }
+  .form-container {
+    margin: 32px auto;
+    padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+    max-width: 98vw;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+}
+
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h1>User Registration</h1>
+  <form id="registrationForm">
+    <div class="form-group">
+      <label>Name:</label>
+      <input type="text" id="name" name="name" required>
+      <div class="error" id="nameError"></div>
+    </div>
+    <div class="form-group">
+      <label>Email:</label>
+      <input type="email" id="email" name="email" required>
+      <div class="error" id="emailError"></div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required>
+      <div class="error" id="phoneError"></div>
+    </div>
+    <div class="form-group">
+      <label>Password:</label>
+      <input type="password" id="password" name="password" required>
+      <div class="error" id="passwordError"></div>
+    </div>
+    <div class="form-group">
+      <label>Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required>
+      <div class="error" id="confirmPasswordError"></div>
+    </div>
+    <div class="form-group">
+      <label>Full Address:</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+      <div class="error" id="addressError"></div>
+    </div>
+    <div class="form-group">
+      <label>City:</label>
+      <input type="text" id="city" name="city" required>
+      <div class="error" id="cityError"></div>
+    </div>
+    <div class="form-group">
+      <label>Zip Code:</label>
+      <input type="text" id="zip" name="zip" required>
+      <div class="error" id="zipError"></div>
+    </div>
+    <div class="form-group">
+      <label>Select Cable Package:</label>
+      <select id="package" name="package" required>
+        <option value="">--Select Package--</option>
+        <option value="Basic">Basic</option>
+        <option value="Standard">Standard</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <div class="error" id="packageError"></div>
+    </div>
+    <div class="form-group">
+      <label>Preferred Connection Date:</label>
+      <input type="date" id="connectionDate" name="connectionDate" required>
+      <div class="error" id="connectionDateError"></div>
+    </div>
+    <div class="terms-container">
+      <input type="checkbox" id="terms" name="terms" required>
+      <label for="terms">I agree to the Terms and Conditions.</label>
+      <div class="error" id="termsError"></div>
+    </div>
+    <button type="submit">Register</button>
+    <div class="login-link">
+      Already have an account? <a href="userlogin.html">Login here</a>.
+    </div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('registrationForm');
+  
+  const fields = {
+    name: {
+      element: document.getElementById('name'),
+      errorElement: document.getElementById('nameError'),
+      validate: (value) => value.trim() !== '' || 'Name is required.'
+    },
+    email: {
+      element: document.getElementById('email'),
+      errorElement: document.getElementById('emailError'),
+      validate: (value) => /^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(value) || 'Enter a valid email.'
+    },
+    phone: {
+      element: document.getElementById('phone'),
+      errorElement: document.getElementById('phoneError'),
+      validate: (value) => /^[0-9]{10}$/.test(value) || 'Enter a valid 10-digit phone number.'
+    },
+    password: {
+      element: document.getElementById('password'),
+      errorElement: document.getElementById('passwordError'),
+      validate: (value) => value.length >= 6 || 'Password must be at least 6 characters.'
+    },
+    confirmPassword: {
+      element: document.getElementById('confirmPassword'),
+      errorElement: document.getElementById('confirmPasswordError'),
+      validate: (value) => value === fields.password.element.value || 'Passwords do not match.'
+    },
+    address: {
+      element: document.getElementById('address'),
+      errorElement: document.getElementById('addressError'),
+      validate: (value) => value.trim() !== '' || 'Address is required.'
+    },
+    city: {
+      element: document.getElementById('city'),
+      errorElement: document.getElementById('cityError'),
+      validate: (value) => value.trim() !== '' || 'City is required.'
+    },
+    zip: {
+      element: document.getElementById('zip'),
+      errorElement: document.getElementById('zipError'),
+      validate: (value) => value.trim() !== '' || 'Zip code is required.'
+    },
+    package: {
+      element: document.getElementById('package'),
+      errorElement: document.getElementById('packageError'),
+      validate: (value) => value !== '' || 'Please select a package.'
+    },
+    connectionDate: {
+      element: document.getElementById('connectionDate'),
+      errorElement: document.getElementById('connectionDateError'),
+      validate: (value) => value !== '' || 'Connection date is required.'
+    },
+    terms: {
+      element: document.getElementById('terms'),
+      errorElement: document.getElementById('termsError'),
+      validate: (checked) => checked || 'You must agree to the terms.'
+    }
+  };
+  
+  // ✅ Real-time validation on input
+  Object.values(fields).forEach(field => {
+    const { element, errorElement, validate } = field;
+    const eventType = element.type === 'checkbox' ? 'change' : 'input';
+  
+    element.addEventListener(eventType, () => {
+      const value = element.type === 'checkbox' ? element.checked : element.value;
+      const validation = validate(value);
+      errorElement.textContent = validation === true ? '' : validation;
+    });
+  });
+  
+  // ✅ On form submit
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    let hasError = false;
+  
+    // Validate all fields
+    for (const key in fields) {
+      const { element, errorElement, validate } = fields[key];
+      const value = element.type === 'checkbox' ? element.checked : element.value;
+      const validation = validate(value);
+      if (validation !== true) {
+        errorElement.textContent = validation;
+        hasError = true;
+      } else {
+        errorElement.textContent = '';
+      }
+    }
+  
+    if (hasError) {
+      return; // Stop form submission
+    }
+  
+    // Prepare form data
+    const formData = {
+      name: fields.name.element.value.trim(),
+      email: fields.email.element.value.trim(),
+      phone: fields.phone.element.value.trim(),
+      password: fields.password.element.value,
+      address: fields.address.element.value.trim(),
+      city: fields.city.element.value.trim(),
+      zip: fields.zip.element.value.trim(),
+      package: fields.package.element.value,
+      connectionDate: fields.connectionDate.element.value
+    };
+  
+    try {
+      const response = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+  
+      if (response.ok) {
+        alert('Registration Successful!');
+        window.location.href = '/userlogin.html'; // Redirect after success
+      } else {
+        const data = await response.json();
+        alert(`Failed to register: ${data.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error occurred. Try again.');
+    }
+  });
+</script>
+</body>
+</html>

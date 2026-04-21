@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Complaints</title>
+  <link rel="stylesheet" href="adminStyling1.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      background-color: #f4f4f4;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #2c3e50;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      padding: 20px 0;
+      margin: 0;
+      font-size: 22px;
+      background-color: #1abc9c;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      border-bottom: 1px solid #34495e;
+    }
+
+    .sidebar ul li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      transition: background 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #34495e;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 12px;
+    }
+
+    .main-content {
+      margin-left: 240px;
+      padding: 30px;
+      width: 100%;
+    }
+
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .container h1 {
+      margin-bottom: 20px;
+    }
+
+    .search-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-group input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    table th, table td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .empInput {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .status-select {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 6px 12px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #16a085;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+      }
+
+      .sidebar h2,
+      .sidebar ul li a span {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2><i class="fas fa-broadcast-tower"></i> Cable Dashboard</h2>
+    <ul>
+  <ul>
+    
+    <li><a href="admindashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+    <li><a href="admincustomers.html"><i class="fas fa-users"></i><span>Customers</span></a></li>
+    <li><a href="adminsubscription.html"><i class="fas fa-tv"></i><span>Subscription</span></a></li>
+    <li><a href="adminbilling.html"><i class="fas fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+    <li><a href="admincustomerreceipt.html"><i class="fas fa-receipt"></i><span>Customer Receipt</span></a></li>
+    <li><a href="adminsetting.html"><i class="fas fa-cog"></i><span>Setting</span></a></li>
+    <li><a href="adminpackages.html"><i class="fas fa-box"></i><span>Packages</span></a></li>
+    <li><a href="admincomplaints.html"><i class="fas fa-exclamation-circle"></i><span>Customer Complaint</span></a></li>
+    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="container">
+    <h1>Complaint Management</h1>
+
+    <div class="search-group">
+      <input type="text" id="searchGeneral" placeholder="Search by Customer ID, Name or Complaint">
+      <input type="text" id="searchEmployee" placeholder="Search by Employee Name">
+      <input type="text" id="searchStatus" placeholder="Search by Status (Pending, In Progress, Resolved)">
+    </div>
+
+    <table id="complaintTable">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Name</th>
+          <th>Complaint</th>
+          <th>Category</th>
+          <th>Assigned Employee</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let allComplaints = [];
+
+  async function loadComplaints() {
+    const res = await fetch('/get-complaints');
+    const data = await res.json();
+    allComplaints = data;
+    displayComplaints(data);
+  }
+
+  function displayComplaints(complaints) {
+    const tbody = document.querySelector('#complaintTable tbody');
+    tbody.innerHTML = '';
+    complaints.forEach(c => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${c.customerId}</td>
+        <td>${c.customerName}</td>
+        <td>${c.complaintText}</td>
+        <td>${c.complaintCategory}</td>
+        <td>
+          <input type="text" value="${c.employeeName || 'Not Assigned'}" class="empInput" data-id="${c._id}" ${c.employeeName ? 'readonly' : ''}>
+        </td>
+        <td>
+          <select class="status-select" data-id="${c._id}">
+            <option ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+            <option ${c.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+            <option ${c.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+          </select>
+        </td>
+        <td>
+          <button onclick="updateComplaint('${c._id}', this)">Update</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  async function updateComplaint(id, btn) {
+    const row = btn.closest('tr');
+    const status = row.querySelector('select').value;
+    const employeeName = row.querySelector('.empInput').value;
+
+    const res = await fetch(`/update-complaint/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, employeeName })
+    });
+
+    if (res.ok) {
+      alert('Updated successfully');
+      loadComplaints();
+    } else {
+      alert('Error updating');
+    }
+  }
+
+  function applyFilters() {
+    const general = document.getElementById('searchGeneral').value.toLowerCase();
+    const employee = document.getElementById('searchEmployee').value.toLowerCase();
+    const status = document.getElementById('searchStatus').value.toLowerCase();
+
+    const filtered = allComplaints.filter(c =>
+      (c.customerId.toLowerCase().includes(general) ||
+       c.customerName.toLowerCase().includes(general) ||
+       c.complaintText.toLowerCase().includes(general)) &&
+      (c.employeeName || 'Not Assigned').toLowerCase().includes(employee) &&
+      (c.status || '').toLowerCase().includes(status)
+    );
+
+    displayComplaints(filtered);
+  }
+
+  document.getElementById('searchGeneral').addEventListener('input', applyFilters);
+  document.getElementById('searchEmployee').addEventListener('input', applyFilters);
+  document.getElementById('searchStatus').addEventListener('input', applyFilters);
+
+  document.addEventListener('DOMContentLoaded', loadComplaints);
+</script>
+
+</body>
+</html>

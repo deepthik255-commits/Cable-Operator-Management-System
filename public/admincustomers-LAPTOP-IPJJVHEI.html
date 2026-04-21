@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Customers</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: 240px;
+      background: rgba(38, 24, 66, 0.97);
+      color: #e0e6f3;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      overflow-y: auto;
+      box-shadow: 2px 0 18px #6bd1e933;
+      z-index: 10;
+      transition: width 0.3s;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      padding: 28px 0 22px 0;
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: #2e1a47;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #6bd1e933;
+      text-shadow: 0 0 10px #6bd1e944;
+    }
+
+    .sidebar h2 i {
+      margin-right: 10px;
+      color: #a16be9;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      border-bottom: 1px solid #3a2a6a;
+    }
+
+    .sidebar ul li a {
+      color: #e0e6f3;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 15px 24px;
+      font-size: 1.08rem;
+      border-radius: 8px 20px 20px 8px;
+      transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+      position: relative;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 14px;
+      font-size: 1.18rem;
+      color: #6bd1e9;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a:focus {
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: #2e1a47;
+      box-shadow: 0 4px 18px #a16be955;
+      outline: none;
+    }
+
+    .sidebar ul li a:hover i,
+    .sidebar ul li a:focus i {
+      color: #2e1a47;
+    }
+
+    .sidebar ul li:last-child {
+      border-bottom: none;
+    }
+
+    /* Main Content Alignment */
+    .main-content {
+      margin-left: 240px;
+      min-height: 100vh;
+      background: transparent;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 40px 0 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 48px;
+      margin-bottom: 32px;
+      color: #6bd1e9;
+      font-size: 2rem;
+      letter-spacing: 1.2px;
+      text-align: center;
+      text-shadow: 0 0 8px #6bd1e955;
+      width: 100%;
+      font-weight: 700;
+    }
+
+    /* Customer Table Styling */
+    #customersTable {
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px #6bd1e955, 0 0 0 2px #a16be933;
+      overflow: hidden;
+      width: 95%;
+      max-width: 1200px;
+      margin: 0 auto 32px auto;
+      font-size: 1.05rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      transition: box-shadow 0.2s;
+    }
+
+    #customersTable thead {
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: white;
+    }
+
+    #customersTable th, #customersTable td {
+      padding: 14px 10px;
+      border: none;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    #customersTable th {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    #customersTable tr {
+      border-bottom: 1px solid #e1e7ea;
+    }
+
+    #customersTable tr:nth-child(even) {
+      background-color: #f2fdfb;
+    }
+
+    #customersTable tr:last-child {
+      border-bottom: none;
+    }
+
+    /* Responsive adjustments for table */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 70px;
+        min-width: 70px;
+      }
+      .sidebar h2,
+      .sidebar ul li a span {
+        display: none;
+      }
+      .main-content {
+        margin-left: 90px;
+        padding: 24px 0;
+      }
+      #customersTable th, #customersTable td {
+        padding: 10px 4px;
+        font-size: 0.98rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      #customersTable {
+        font-size: 0.93rem;
+        max-width: 99vw;
+        margin: 0 2vw 24px 2vw;
+      }
+      #customersTable th, #customersTable td {
+        padding: 8px 2px;
+      }
+      h1 {
+        font-size: 1.2rem;
+        margin-top: 70px;
+      }
+    }
+
+    /* Optional: Make table horizontally scrollable on small screens */
+    @media (max-width: 600px) {
+      .sidebar {
+        position: fixed;
+        width: 100vw;
+        min-width: 0;
+        height: 60px;
+        min-height: 0;
+        flex-direction: row;
+        align-items: center;
+        top: 0;
+        left: 0;
+        box-shadow: 0 2px 14px #6bd1e933;
+        z-index: 15;
+      }
+      .sidebar h2 {
+        display: none;
+      }
+      .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .sidebar ul li {
+        margin: 0;
+        border-bottom: none;
+      }
+      .sidebar ul li a {
+        border-radius: 10px;
+        padding: 0.5rem 0.5rem;
+        font-size: 1.08rem;
+      }
+      .main-content {
+        margin-left: 0;
+        margin-top: 70px;
+        padding: 1.2rem 0.5rem;
+        align-items: stretch;
+      }
+      #customersTable {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      #customersTable th, #customersTable td {
+        min-width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2><i class="fas fa-broadcast-tower"></i> ADMIN PANEL</h2>
+  <ul>
+    <li><a href="admindashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+    <li><a href="admincustomers.html"><i class="fas fa-users"></i><span>Customers</span></a></li>
+    <li><a href="admincustomerreceipt.html"><i class="fas fa-receipt"></i><span>Customer Receipt</span></a></li>
+    <li><a href="adminpackage.html"><i class="fas fa-box"></i><span>Packages</span></a></li>
+    <li><a href="admincomplaints.html"><i class="fas fa-exclamation-circle"></i><span>Customer Complaint</span></a></li>
+    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+  </ul>
+</div>
+
+<div class="main-content">
+  <h1>Registered Customers</h1>
+  <table id="customersTable">
+    <thead>
+      <tr>
+        <th>Customer ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>ZIP</th>
+        <th>Package</th>
+        <th>Connection Date</th>
+        <th>Registration Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  fetch('/get-users')
+    .then(res => res.json())
+    .then(users => {
+      const tbody = document.querySelector('#customersTable tbody');
+      tbody.innerHTML = ''; // Clear table before filling
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${user.customerId}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.phone}</td>
+          <td>${user.address}</td>
+          <td>${user.city}</td>
+          <td>${user.zip}</td>
+          <td>${user.package}</td>
+          <td>${new Date(user.connectionDate).toLocaleDateString()}</td>
+          <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+          <td>${user.status}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Error fetching users:', err);
+    });
+</script>
+</body>
+</html>

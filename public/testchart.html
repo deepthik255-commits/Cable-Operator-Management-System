@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chart Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>Test: Packages Per Month</h2>
+  <canvas id="packagesPerMonthChart" width="600" height="300"></canvas>
+  <script>
+    const stats = {
+  labels: ["Jun 2024", "Jul 2024", "Aug 2024", "Sep 2024", "Oct 2024", "Nov 2024", "Dec 2024", "Jan 2025", "Feb 2025", "Mar 2025", "Apr 2025", "May 2025"],
+  data: [5, 6, 8, 7, 9, 10, 12, 11, 13, 14, 12, 15]
+};
+const ctx = document.getElementById('packagesPerMonthChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: stats.labels,
+    datasets: [{
+      label: 'Packages Subscribed',
+      data: stats.data,
+      backgroundColor: '#007bff'
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true }
+    }
+  }
+});
+
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('/api/stats/packages-per-month')
+        .then(res => {
+          if (!res.ok) throw new Error('API error: ' + res.status);
+          return res.json();
+        })
+        .then(stats => {
+          console.log('Chart data:', stats);
+          const ctx = document.getElementById('packagesPerMonthChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: stats.labels,
+              datasets: [{
+                label: 'Packages Subscribed',
+                data: stats.data,
+                backgroundColor: '#007bff'
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { beginAtZero: true }
+              }
+            }
+          });
+        })
+        .catch(err => {
+          document.body.innerHTML += '<pre style="color:red">' + err + '</pre>';
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>

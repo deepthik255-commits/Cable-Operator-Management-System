@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Customers</title>
+  <link rel="stylesheet" href="adminStyling1.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      background-color: #f4f4f4;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #2c3e50;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      padding: 20px 0;
+      margin: 0;
+      font-size: 22px;
+      background-color: #1abc9c;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      border-bottom: 1px solid #34495e;
+    }
+
+    .sidebar ul li a {
+      color: #ecf0f1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      transition: background 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #34495e;
+    }
+
+    .sidebar ul li a i {
+      margin-right: 12px;
+    }
+
+    .main-content {
+      margin-left: 240px;
+      padding: 30px;
+      width: 100%;
+    }
+
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .container h1 {
+      margin-bottom: 20px;
+    }
+
+    .search-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-group input {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      background-color: #2c3e50;
+      color: white;
+    }
+
+    table th, table td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .empInput {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .status-select {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 6px 12px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #16a085;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 60px;
+      }
+
+      .sidebar h2,
+      .sidebar ul li a span {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2><i class="fas fa-broadcast-tower"></i> Cable Dashboard</h2>
+    <ul>
+  <ul>
+    <li><a href="admindashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+    <li><a href="admincustomers.html"><i class="fas fa-users"></i><span>Customers</span></a></li>
+    <li><a href="adminsubscription.html"><i class="fas fa-tv"></i><span>Subscription</span></a></li>
+    <li><a href="adminbilling.html"><i class="fas fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+    <li><a href="admincustomerreceipt.html"><i class="fas fa-receipt"></i><span>Customer Receipt</span></a></li>
+    <li><a href="adminsetting.html"><i class="fas fa-cog"></i><span>Setting</span></a></li>
+    <li><a href="adminpackages.html"><i class="fas fa-box"></i><span>Packages</span></a></li>
+    <li><a href="admincomplaints.html"><i class="fas fa-exclamation-circle"></i><span>Customer Complaint</span></a></li>
+    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+  </ul>
+</div>
+  <h1>Registered Customers</h1>
+  <table id="customersTable">
+    <thead>
+      <tr>
+        <th>Customer ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>ZIP</th>
+        <th>Package</th>
+        <th>Connection Date</th>
+        <th>Registration Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('/get-users')
+      .then(res => res.json())
+      .then(users => {
+        const tbody = document.querySelector('#customersTable tbody');
+        tbody.innerHTML = ''; // Clear table before filling
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.customerId}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.phone}</td>
+            <td>${user.address}</td>
+            <td>${user.city}</td>
+            <td>${user.zip}</td>
+            <td>${user.package}</td>
+            <td>${new Date(user.connectionDate).toLocaleDateString()}</td>
+            <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+            <td>${user.status}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching users:', err);
+      });
+  </script>
+</body>
+</html>

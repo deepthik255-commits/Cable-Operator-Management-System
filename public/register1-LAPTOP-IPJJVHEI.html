@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Registration Page</title>
+  <style>
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      background: linear-gradient(to right, #33214a, #505e78);
+      background: url('img1.png') no-repeat center center fixed; 
+      background-size: cover; 
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .form-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 400px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #f13009f3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a17d7;
+    }
+    .terms-container {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+    .terms-container input {
+      width: auto;
+      margin-right: 5px;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .error {
+      color: red;
+      font-size: 13px;
+    }
+
+    input:valid, textarea:valid, select:valid {
+  border: 2px solid #4CAF50; /* Green border when valid */
+}
+
+input:invalid, textarea:invalid, select:invalid {
+  border: 2px solid #f44336; /* Red border when invalid */
+}
+
+input, textarea, select {
+  transition: border-color 0.3s ease;
+}
+
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h1>User Registration</h1>
+  <form id="registrationForm">
+    <div class="form-group">
+      <label>Name:</label>
+      <input type="text" id="name" name="name" required>
+      <div class="error" id="nameError"></div>
+    </div>
+    <div class="form-group">
+      <label>Email:</label>
+      <input type="email" id="email" name="email" required>
+      <div class="error" id="emailError"></div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required>
+      <div class="error" id="phoneError"></div>
+    </div>
+    <div class="form-group">
+      <label>Password:</label>
+      <input type="password" id="password" name="password" required>
+      <div class="error" id="passwordError"></div>
+    </div>
+    <div class="form-group">
+      <label>Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required>
+      <div class="error" id="confirmPasswordError"></div>
+    </div>
+    <div class="form-group">
+      <label>Full Address:</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+      <div class="error" id="addressError"></div>
+    </div>
+    <div class="form-group">
+      <label>City:</label>
+      <input type="text" id="city" name="city" required>
+      <div class="error" id="cityError"></div>
+    </div>
+    <div class="form-group">
+      <label>Zip Code:</label>
+      <input type="text" id="zip" name="zip" required>
+      <div class="error" id="zipError"></div>
+    </div>
+    <div class="form-group">
+      <label>Select Cable Package:</label>
+      <select id="package" name="package" required>
+        <option value="">--Select Package--</option>
+        <option value="Basic">Basic</option>
+        <option value="Standard">Standard</option>
+        <option value="Premium">Premium</option>
+      </select>
+      <div class="error" id="packageError"></div>
+    </div>
+    <div class="form-group">
+      <label>Preferred Connection Date:</label>
+      <input type="date" id="connectionDate" name="connectionDate" required>
+      <div class="error" id="connectionDateError"></div>
+    </div>
+    <div class="terms-container">
+      <input type="checkbox" id="terms" name="terms" required>
+      <label for="terms">I agree to the Terms and Conditions.</label>
+      <div class="error" id="termsError"></div>
+    </div>
+    <button type="submit">Register</button>
+    <div class="login-link">
+      Already have an account? <a href="userlogin.html">Login here</a>.
+    </div>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('registrationForm');
+  
+  const fields = {
+    name: {
+      element: document.getElementById('name'),
+      errorElement: document.getElementById('nameError'),
+      validate: (value) => value.trim() !== '' || 'Name is required.'
+    },
+    email: {
+      element: document.getElementById('email'),
+      errorElement: document.getElementById('emailError'),
+      validate: (value) => /^[^ ]+@[^ ]+\.[a-z]{2,3}$/.test(value) || 'Enter a valid email.'
+    },
+    phone: {
+      element: document.getElementById('phone'),
+      errorElement: document.getElementById('phoneError'),
+      validate: (value) => /^[0-9]{10}$/.test(value) || 'Enter a valid 10-digit phone number.'
+    },
+    password: {
+      element: document.getElementById('password'),
+      errorElement: document.getElementById('passwordError'),
+      validate: (value) => value.length >= 6 || 'Password must be at least 6 characters.'
+    },
+    confirmPassword: {
+      element: document.getElementById('confirmPassword'),
+      errorElement: document.getElementById('confirmPasswordError'),
+      validate: (value) => value === fields.password.element.value || 'Passwords do not match.'
+    },
+    address: {
+      element: document.getElementById('address'),
+      errorElement: document.getElementById('addressError'),
+      validate: (value) => value.trim() !== '' || 'Address is required.'
+    },
+    city: {
+      element: document.getElementById('city'),
+      errorElement: document.getElementById('cityError'),
+      validate: (value) => value.trim() !== '' || 'City is required.'
+    },
+    zip: {
+      element: document.getElementById('zip'),
+      errorElement: document.getElementById('zipError'),
+      validate: (value) => value.trim() !== '' || 'Zip code is required.'
+    },
+    package: {
+      element: document.getElementById('package'),
+      errorElement: document.getElementById('packageError'),
+      validate: (value) => value !== '' || 'Please select a package.'
+    },
+    connectionDate: {
+      element: document.getElementById('connectionDate'),
+      errorElement: document.getElementById('connectionDateError'),
+      validate: (value) => value !== '' || 'Connection date is required.'
+    },
+    terms: {
+      element: document.getElementById('terms'),
+      errorElement: document.getElementById('termsError'),
+      validate: (checked) => checked || 'You must agree to the terms.'
+    }
+  };
+  
+  // ✅ Real-time validation on input
+  Object.values(fields).forEach(field => {
+    const { element, errorElement, validate } = field;
+    const eventType = element.type === 'checkbox' ? 'change' : 'input';
+  
+    element.addEventListener(eventType, () => {
+      const value = element.type === 'checkbox' ? element.checked : element.value;
+      const validation = validate(value);
+      errorElement.textContent = validation === true ? '' : validation;
+    });
+  });
+  
+  // ✅ On form submit
+  form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    let hasError = false;
+  
+    // Validate all fields
+    for (const key in fields) {
+      const { element, errorElement, validate } = fields[key];
+      const value = element.type === 'checkbox' ? element.checked : element.value;
+      const validation = validate(value);
+      if (validation !== true) {
+        errorElement.textContent = validation;
+        hasError = true;
+      } else {
+        errorElement.textContent = '';
+      }
+    }
+  
+    if (hasError) {
+      return; // Stop form submission
+    }
+  
+    // Prepare form data
+    const formData = {
+      name: fields.name.element.value.trim(),
+      email: fields.email.element.value.trim(),
+      phone: fields.phone.element.value.trim(),
+      password: fields.password.element.value,
+      address: fields.address.element.value.trim(),
+      city: fields.city.element.value.trim(),
+      zip: fields.zip.element.value.trim(),
+      package: fields.package.element.value,
+      connectionDate: fields.connectionDate.element.value
+    };
+  
+    try {
+      const response = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+  
+      if (response.ok) {
+        alert('Registration Successful!');
+        window.location.href = '/userlogin.html'; // Redirect after success
+      } else {
+        const data = await response.json();
+        alert(`Failed to register: ${data.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error occurred. Try again.');
+    }
+  });
+  </script>
+  
+
+</body>
+</html>

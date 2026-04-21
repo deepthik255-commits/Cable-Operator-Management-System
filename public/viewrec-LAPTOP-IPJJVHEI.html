@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My DTH Receipts</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: rgba(38, 24, 66, 0.97);
+  color: #e0e6f3;
+  min-height: 100vh;
+  box-shadow: 2px 0 18px #6bd1e933;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  transition: width 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #6bd1e9;
+  padding: 2rem 1rem 1.2rem 1rem;
+  margin: 0;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #6bd1e933;
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  text-shadow: 0 0 10px #6bd1e944;
+}
+
+.sidebar h2 i {
+  margin-right: 12px;
+  color: #a16be9;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin: 0.7rem 0;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  color: #e0e6f3;
+  text-decoration: none;
+  font-size: 1.08rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 8px 20px 20px 8px;
+  transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+  position: relative;
+}
+
+.sidebar ul li a i {
+  margin-right: 14px;
+  font-size: 1.18rem;
+  color: #6bd1e9;
+  min-width: 22px;
+  text-align: center;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a:focus {
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  box-shadow: 0 4px 18px #a16be955;
+  outline: none;
+}
+
+.sidebar ul li a:hover i,
+.sidebar ul li a:focus i {
+  color: #2e1a47;
+}
+
+.sidebar ul li:last-child {
+  margin-bottom: 1.5rem;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 240px;
+  padding: 3.5rem 2.5rem;
+  flex: 1;
+  min-height: 100vh;
+  color: #f3f7fa;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.main-content h1 {
+  font-size: 2.3rem;
+  margin-bottom: 1.3rem;
+  color: #6bd1e9;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 12px #6bd1e944;
+}
+
+.main-content p {
+  font-size: 1.15rem;
+  color: #e0e6f3;
+  margin-bottom: 0;
+  opacity: 0.93;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+    align-items: center;
+  }
+  .sidebar h2 {
+    font-size: 1.1rem;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    background: none;
+    color: #6bd1e9;
+  }
+  .sidebar ul li a {
+    justify-content: center;
+    padding: 0.85rem 0.5rem;
+    font-size: 1.08rem;
+  }
+  .sidebar ul li a span {
+    display: none;
+  }
+  .main-content {
+    margin-left: 70px;
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+    width: 100vw;
+    min-width: 0;
+    height: 60px;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 14px #6bd1e933;
+    z-index: 15;
+  }
+  .sidebar h2 {
+    display: none;
+  }
+  .sidebar ul {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .sidebar ul li {
+    margin: 0;
+  }
+  .sidebar ul li a {
+    border-radius: 10px;
+    padding: 0.5rem 0.5rem;
+    font-size: 1.08rem;
+  }
+  .main-content {
+    margin-left: 0;
+    margin-top: 70px;
+    padding: 1.2rem 0.5rem;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+  <div class="sidebar">
+    <h2><i class="fas fa-broadcast-tower"></i>  user Dashboard</h2>
+    <ul>
+      <li><a href="useraccount.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+      <li><a href="usersubscription.html"><i class="fas fa-tv"></i> <span>Subscription</span></a></li>
+      <li><a href="userbillings.html"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+      <li><a href="usernotifications.html"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+      <li><a href="userpackage.html"><i class="fas fa-sliders-h"></i> <span>Packages</span></a></li>
+      <li><a href="viewreceipts.html"><i class="fas fa-receipt"></i> <span>Your Receipts</span></a></li>
+      <li><a href="usersupport.html"><i class="fas fa-headset"></i> <span>Support</span></a></li>
+      <li><a href="usercomplaints.html"><i class="fas fa-comment-dots"></i> <span>Complaint Box</span></a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li> 
+    </ul>
+  </div>
+  <div class="container">
+    <h2>My DTH Receipts</h2>
+    <div id="receipts" class="receipts-list"></div>
+    <div id="message" class="no-receipts"></div>
+    <a href="userbillings.html" class="back-btn">Back to Billing</a>
+  </div>
+  <script>
+    function durationText(d) {
+      if (d == 1) return 'Monthly';
+      if (d == 3) return 'Quarterly';
+      if (d == 12) return 'Yearly';
+      return d + ' months';
+    }
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '-';
+      return d.toISOString().substring(0, 10);
+    }
+    function formatCurrency(val) {
+      return '₹' + Number(val).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    async function fetchReceipts() {
+      try {
+        const res = await fetch('/api/my-subscriptions');
+        if (!res.ok) throw new Error('Not logged in or no receipts found');
+        const data = await res.json();
+        const receiptsDiv = document.getElementById('receipts');
+        const msgDiv = document.getElementById('message');
+        receiptsDiv.innerHTML = '';
+        msgDiv.textContent = '';
+
+        if (!data.length) {
+          msgDiv.textContent = 'No receipts found. Please recharge to see your receipts.';
+          return;
+        }
+
+        // Sort by latest first
+        data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        data.forEach(sub => {
+          const total = Number(sub.total || 0);
+          const gst = total * 0.18;
+          const grandTotal = total + gst;
+          const packs = Array.isArray(sub.packs) && sub.packs.length ? sub.packs : ['None'];
+
+          const card = document.createElement('div');
+          card.className = 'receipt-card';
+          card.innerHTML = `
+            <div class="receipt-date">Recharge Date: ${formatDate(sub.createdAt)}</div>
+            <div class="receipt-header">
+              <strong>DTH Subscription Receipt</strong>
+            </div>
+            <div class="receipt-details">
+              <div><strong>Customer ID:</strong> ${sub.customerId || '-'}</div>
+              <div><strong>Name:</strong> ${sub.name || '-'}</div>
+              <div><strong>DTH Provider:</strong> ${sub.provider || '-'}</div>
+              <div><strong>Subscription Duration:</strong> ${durationText(sub.duration)}</div>
+              <div><strong>Start Date:</strong> ${formatDate(sub.startDate)}</div>
+              <div><strong>End Date:</strong> ${formatDate(sub.endDate)}</div>
+              <div><strong>Packs:</strong>
+                <ul class="packs-list">
+                  ${packs.map(p => `<li>${p}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+            <div class="receipt-summary">
+              <div><strong>Total (before GST):</strong> ${formatCurrency(total)}</div>
+              <div><strong>GST (18%):</strong> ${formatCurrency(gst)}</div>
+            </div>
+            <div class="receipt-total">
+              Grand Total: ${formatCurrency(grandTotal)}
+            </div>
+          `;
+          receiptsDiv.appendChild(card);
+        });
+      } catch (err) {
+        document.getElementById('message').textContent = 'No receipts found. Please recharge to see your receipts.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchReceipts);
+  </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DTH Subscription Receipt</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0e7ff 0%, #f4f4f4 100%);
+      margin: 0;
+      min-height: 100vh;
+    }
+    .receipt-container {
+      max-width: 480px;
+      margin: 48px auto;
+      background: #fff;
+      padding: 32px 28px 28px 28px;
+      border-radius: 12px;
+      box-shadow: 0 6px 32px 0 rgba(0, 123, 255, 0.13), 0 1.5px 6px #aaa;
+      animation: fadeIn 1s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .receipt-header h2 {
+      color: #007bff;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    .receipt-header small {
+      color: #888;
+      font-size: 1rem;
+    }
+    .receipt-details {
+      margin-bottom: 20px;
+      border-bottom: 1px dashed #b4c6fc;
+      padding-bottom: 16px;
+    }
+    .receipt-details div {
+      margin: 4px 0;
+      font-size: 1.05rem;
+    }
+    .receipt-summary {
+      margin-top: 18px;
+      padding: 12px 0;
+      border-top: 1px solid #e3e8f0;
+      border-bottom: 1px solid #e3e8f0;
+      background: #f8f9fa;
+    }
+    .receipt-summary div {
+      margin: 6px 0;
+      font-size: 1.07rem;
+    }
+    .receipt-total {
+      text-align: right;
+      font-size: 1.18rem;
+      color: #007bff;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    .packs-list {
+      margin: 0 0 8px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .packs-list li {
+      background: #e9ecef;
+      margin-bottom: 4px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      font-size: 0.98rem;
+      color: #333;
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 28px;
+      align-items: center;
+    }
+    .action-btn {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 5px;
+      font-size: 1.07rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-width: 180px;
+    }
+    .action-btn[disabled] {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    .action-btn:hover:enabled {
+      background: #0056b3;
+    }
+    .success-message {
+      color: #388e3c;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 16px;
+      font-size: 1.13rem;
+      display: none;
+    }
+    #message {
+      color: #d32f2f;
+      text-align: center;
+      margin-top: 18px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      min-height: 22px;
+      transition: color 0.4s;
+    }
+    @media (max-width: 600px) {
+      .receipt-container { padding: 12px 4px;}
+      .receipt-header h2 { font-size: 1.3rem;}
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-container" id="receipt">
+    <div class="receipt-header">
+      <h2>DTH Subscription Receipt</h2>
+      <small id="receiptDate"></small>
+    </div>
+    <div class="receipt-details" id="receiptDetails"></div>
+    <div class="receipt-summary" id="receiptSummary"></div>
+    <div class="receipt-total" id="receiptTotal"></div>
+    <div class="btn-group" id="btnGroup">
+      <button class="action-btn" id="rechargeBtn">Recharge Now</button>
+      <button class="action-btn" onclick="window.print()">Print Receipt</button>
+      <button class="action-btn" id="viewReceiptsBtn">View Receipts</button>
+    </div>
+    <div id="successMsg" class="success-message"></div>
+    <div id="message"></div>
+  </div>
+  <script>
+    let latestSubRecharged = false;
+
+    function durationText(d) {
+      if (d == 1) return 'Monthly';
+      if (d == 3) return 'Quarterly';
+      if (d == 12) return 'Yearly';
+      return d + ' months';
+    }
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '-';
+      return d.toISOString().substring(0, 10);
+    }
+    function formatCurrency(val) {
+      return '₹' + Number(val).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    async function fetchLatestSubscription() {
+      try {
+        const res = await fetch('/api/my-latest-subscription');
+        if (!res.ok) throw new Error('Not logged in or no subscriptions found');
+        const sub = await res.json();
+
+        latestSubRecharged = !!sub.recharged;
+
+        document.getElementById('receiptDate').textContent =
+          'Receipt Date: ' + formatDate(new Date());
+
+        document.getElementById('receiptDetails').innerHTML = `
+          <div><strong>Customer ID:</strong> ${sub.customerId || '-'}</div>
+          <div><strong>Name:</strong> ${sub.name || '-'}</div>
+          <div><strong>DTH Provider:</strong> ${sub.provider || '-'}</div>
+          <div><strong>Subscription Duration:</strong> ${durationText(sub.duration)}</div>
+          <div><strong>Start Date:</strong> ${formatDate(sub.startDate)}</div>
+          <div><strong>End Date:</strong> ${formatDate(sub.endDate)}</div>
+          <div><strong>Packs:</strong>
+            <ul class="packs-list">
+              ${(Array.isArray(sub.packs) && sub.packs.length) ? sub.packs.map(p => `<li>${p}</li>`).join('') : '<li>None</li>'}
+            </ul>
+          </div>
+        `;
+
+        // Calculate GST and grand total
+        const total = Number(sub.total || 0);
+        const gst = total * 0.18;
+        const grandTotal = total + gst;
+
+        document.getElementById('receiptSummary').innerHTML = `
+          <div><strong>Total (before GST):</strong> ${formatCurrency(total)}</div>
+          <div><strong>GST (18%):</strong> ${formatCurrency(gst)}</div>
+        `;
+        document.getElementById('receiptTotal').innerHTML =
+          `Grand Total: ${formatCurrency(grandTotal)}`;
+
+        document.getElementById('message').textContent = '';
+
+        // If already recharged, disable the Recharge button and show info
+        if (latestSubRecharged) {
+          document.getElementById('rechargeBtn').disabled = true;
+          document.getElementById('rechargeBtn').textContent = 'Already Recharged';
+          document.getElementById('message').textContent =
+            'This subscription is already recharged. You can view your receipt in the Receipts section.';
+        } else {
+          document.getElementById('rechargeBtn').disabled = false;
+          document.getElementById('rechargeBtn').textContent = 'Recharge Now';
+          document.getElementById('message').textContent = '';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = 'No subscription receipt found. Please subscribe first.';
+        document.getElementById('receiptDetails').innerHTML = '';
+        document.getElementById('receiptSummary').innerHTML = '';
+        document.getElementById('receiptTotal').innerHTML = '';
+        document.getElementById('btnGroup').style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchLatestSubscription();
+
+      document.getElementById('rechargeBtn').addEventListener('click', async function() {
+        if (latestSubRecharged) return;
+        const msg = document.getElementById('successMsg');
+        try {
+          const res = await fetch('/api/mark-recharged', { method: 'POST', credentials: 'include' });
+          if (res.ok) {
+            msg.textContent = 'Recharge Successful!';
+            msg.style.display = 'block';
+            document.getElementById('rechargeBtn').disabled = true;
+            document.getElementById('rechargeBtn').textContent = 'Already Recharged';
+            latestSubRecharged = true;
+            document.getElementById('message').textContent =
+              'This subscription is already recharged. You can view your receipt in the Receipts section.';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+          } else {
+            msg.textContent = 'Recharge failed!';
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+          }
+        } catch (err) {
+          msg.textContent = 'Recharge failed!';
+          msg.style.display = 'block';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+      });
+
+      document.getElementById('viewReceiptsBtn').addEventListener('click', function() {
+        window.location.href = 'viewreceipts.html';
+      });
+    });
+
+    
+  </script>
+</body>
+</html>

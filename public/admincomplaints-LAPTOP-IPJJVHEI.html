@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Complaints</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+      min-height: 100vh;
+      display: flex;
+    }
+    /* Sidebar Styling */
+    .sidebar {
+      width: 250px;
+      background: rgba(46, 26, 71, 0.98);
+      min-height: 100vh;
+      color: #fff;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 10;
+      box-shadow: 2px 0 18px #6bd1e933;
+      transition: width 0.3s;
+    }
+    .sidebar h2 {
+      text-align: center;
+      padding: 28px 0 22px 0;
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: #2e1a47;
+      letter-spacing: 1px;
+      border-bottom: 1px solid #6bd1e933;
+      text-shadow: 0 0 10px #6bd1e944;
+      width: 100%;
+    }
+    .sidebar h2 i {
+      margin-right: 10px;
+      color: #a16be9;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+    .sidebar ul li {
+      border-bottom: 1px solid #3a2a6a;
+    }
+    .sidebar ul li a {
+      color: #e0e6f3;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 15px 24px;
+      font-size: 1.08rem;
+      border-radius: 8px 20px 20px 8px;
+      transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+      position: relative;
+    }
+    .sidebar ul li a i {
+      margin-right: 14px;
+      font-size: 1.18rem;
+      color: #6bd1e9;
+      min-width: 22px;
+      text-align: center;
+    }
+    .sidebar ul li a:hover,
+    .sidebar ul li a:focus {
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: #2e1a47;
+      box-shadow: 0 4px 18px #a16be955;
+      outline: none;
+    }
+    .sidebar ul li a:hover i,
+    .sidebar ul li a:focus i {
+      color: #2e1a47;
+    }
+    .sidebar ul li:last-child {
+      border-bottom: none;
+    }
+
+    /* Main Content Styling */
+    .main-content {
+      margin-left: 270px;
+      padding: 48px 0 40px 0;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: transparent;
+      box-sizing: border-box;
+    }
+    .container {
+      background: #fff;
+      padding: 32px 28px 28px 28px;
+      border-radius: 14px;
+      box-shadow: 0 8px 36px 0 #6bd1e955, 0 0 0 2px #a16be933;
+      width: 100%;
+      max-width: 1200px;
+      animation: fadeIn 1s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .container h1 {
+      margin-bottom: 24px;
+      color: #6bd1e9;
+      font-size: 2.1rem;
+      letter-spacing: 1.2px;
+      text-align: center;
+      text-shadow: 0 2px 16px #a16be955;
+      font-weight: 700;
+    }
+    /* Search Group Styling */
+    .search-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .search-group input {
+      padding: 10px;
+      border: 1px solid #a16be9;
+      border-radius: 6px;
+      flex: 1;
+      min-width: 180px;
+      font-size: 1rem;
+      background: #f7faff;
+      color: #2e1a47;
+      transition: border 0.2s;
+    }
+    .search-group input:focus {
+      border: 1.5px solid #6bd1e9;
+      outline: none;
+    }
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 10px;
+      background: #f9fbff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px #e0e7ff;
+      transition: box-shadow 0.3s;
+    }
+    table thead {
+      background: linear-gradient(90deg, #6bd1e9 80%, #a16be9 100%);
+      color: #fff;
+    }
+    table th, table td {
+      padding: 14px 10px;
+      border: none;
+      text-align: left;
+      font-size: 1rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    table th {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    table tr {
+      opacity: 0;
+      animation: rowFadeIn 0.7s forwards;
+    }
+    @keyframes rowFadeIn {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    table tr:nth-child(even) td {
+      background: #f0f5ff;
+    }
+    table tr:nth-child(odd) td {
+      background: #ffffff;
+    }
+    table tbody tr:hover td {
+      background: #e3f0ff;
+      color: #6bd1e9;
+      transition: background 0.3s, color 0.3s;
+      cursor: pointer;
+    }
+    /* Inputs and Selects in Table */
+    .empInput, .status-select {
+      width: 100%;
+      padding: 7px;
+      border: 1px solid #a16be9;
+      border-radius: 5px;
+      background: #f7faff;
+      color: #2e1a47;
+      font-size: 1rem;
+      transition: border 0.2s;
+    }
+    .empInput:focus, .status-select:focus {
+      border: 1.5px solid #6bd1e9;
+      outline: none;
+    }
+    /* Button Styling */
+    button {
+      padding: 7px 18px;
+      background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #a16be955;
+      transition: background 0.2s, color 0.2s, transform 0.18s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #a16be9 0%, #6bd1e9 100%);
+      color: #2e1a47;
+      transform: scale(1.05);
+    }
+    /* Responsive Design */
+    @media (max-width: 900px) {
+      .sidebar {
+        width: 70px;
+        min-width: 70px;
+      }
+      .sidebar h2,
+      .sidebar ul li a span {
+        display: none;
+      }
+      .main-content {
+        margin-left: 90px;
+        padding: 24px 0;
+      }
+      .container {
+        padding: 20px 4vw;
+      }
+      table th, table td {
+        padding: 10px 4px;
+        font-size: 0.97rem;
+      }
+      .container h1 {
+        font-size: 1.4rem;
+      }
+    }
+    @media (max-width: 700px) {
+      .container {
+        padding: 12px 2px;
+        max-width: 99vw;
+        margin: 0 2vw 24px 2vw;
+      }
+      table th, table td {
+        padding: 8px 2px;
+        font-size: 0.93rem;
+      }
+      .container h1 {
+        font-size: 1.15rem;
+        margin-top: 70px;
+      }
+    }
+    @media (max-width: 600px) {
+      .sidebar {
+        position: fixed;
+        width: 100vw;
+        min-width: 0;
+        height: 60px;
+        min-height: 0;
+        flex-direction: row;
+        align-items: center;
+        top: 0;
+        left: 0;
+        box-shadow: 0 2px 14px #6bd1e933;
+        z-index: 15;
+      }
+      .sidebar h2 {
+        display: none;
+      }
+      .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        width: 100vw;
+        justify-content: space-around;
+        align-items: center;
+      }
+      .sidebar ul li {
+        margin: 0;
+        border-bottom: none;
+      }
+      .sidebar ul li a {
+        border-radius: 10px;
+        padding: 0.5rem 0.5rem;
+        font-size: 1.08rem;
+      }
+      .main-content {
+        margin-left: 0;
+        margin-top: 70px;
+        padding: 1.2rem 0.5rem;
+        align-items: stretch;
+      }
+      .container {
+        margin-left: 0;
+        margin-top: 0;
+        padding: 1.2rem 0.5rem;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      table th, table td {
+        min-width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2><i class="fas fa-broadcast-tower"></i> ADMIN PANEL</h2>
+  <ul>
+    <li><a href="admindashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+    <li><a href="admincustomers.html"><i class="fas fa-users"></i><span>Customers</span></a></li>
+    <li><a href="admincustomerreceipt.html"><i class="fas fa-receipt"></i><span>Customer Receipt</span></a></li>
+    <li><a href="adminpackage.html"><i class="fas fa-box"></i><span>Packages</span></a></li>
+    <li><a href="admincomplaints.html"><i class="fas fa-exclamation-circle"></i><span>Customer Complaint</span></a></li>
+    <li><a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="container">
+    <h1>Complaint Management</h1>
+
+    <div class="search-group">
+      <input type="text" id="searchGeneral" placeholder="Search by Customer ID, Name or Complaint">
+      <input type="text" id="searchEmployee" placeholder="Search by Employee Name">
+      <input type="text" id="searchStatus" placeholder="Search by Status (Pending,  Solved)">
+    </div>
+
+    <table id="complaintTable">
+      <thead>
+        <tr>
+          <th>Customer ID</th>
+          <th>Name</th>
+          <th>Complaint</th>
+          <th>Category</th>
+          <th>Assigned Employee</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let allComplaints = [];
+
+  async function loadComplaints() {
+    const res = await fetch('/get-complaints');
+    const data = await res.json();
+    allComplaints = data;
+    displayComplaints(data);
+  }
+
+  function displayComplaints(complaints) {
+    const tbody = document.querySelector('#complaintTable tbody');
+    tbody.innerHTML = '';
+    complaints.forEach(c => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${c.customerId}</td>
+        <td>${c.customerName}</td>
+        <td>${c.complaintText}</td>
+        <td>${c.complaintCategory}</td>
+        <td>
+          <input type="text" value="${c.employeeName || 'Not Assigned'}" class="empInput" data-id="${c._id}" ${c.employeeName ? 'readonly' : ''}>
+        </td>
+        <td>
+         <select class="status-select" data-id="${c._id}">
+  <option ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+  <option ${c.status === 'Solved' ? 'selected' : ''}>Solved</option>
+</select>
+
+        </td>
+        <td>
+          <button onclick="updateComplaint('${c._id}', this)">Update</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  async function updateComplaint(id, btn) {
+  const row = btn.closest('tr');
+  const status = row.querySelector('select').value;
+  const employeeName = row.querySelector('.empInput').value;
+
+  const res = await fetch(`/update-complaint/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, employeeName })
+  });
+
+  if (res.ok) {
+    alert('Updated successfully');
+    // Clear filters to show updated data
+    document.getElementById('searchGeneral').value = '';
+    document.getElementById('searchEmployee').value = '';
+    document.getElementById('searchStatus').value = '';
+    loadComplaints();
+  } else {
+    alert('Error updating');
+  }
+}
+
+
+  function applyFilters() {
+    const general = document.getElementById('searchGeneral').value.toLowerCase();
+    const employee = document.getElementById('searchEmployee').value.toLowerCase();
+    const status = document.getElementById('searchStatus').value.toLowerCase();
+
+    const filtered = allComplaints.filter(c =>
+      (c.customerId.toLowerCase().includes(general) ||
+       c.customerName.toLowerCase().includes(general) ||
+       c.complaintText.toLowerCase().includes(general)) &&
+      (c.employeeName || 'Not Assigned').toLowerCase().includes(employee) &&
+      (c.status || '').toLowerCase().includes(status)
+    );
+
+    displayComplaints(filtered);
+  }
+
+  document.getElementById('searchGeneral').addEventListener('input', applyFilters);
+  document.getElementById('searchEmployee').addEventListener('input', applyFilters);
+  document.getElementById('searchStatus').addEventListener('input', applyFilters);
+
+  document.addEventListener('DOMContentLoaded', loadComplaints);
+</script>
+</body>
+</html>

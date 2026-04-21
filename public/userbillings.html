@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DTH Subscription Receipt</title>
+  <style>
+    body {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #2e1a47 0%, #3a2a6a 70%, #1ca7b8 100%);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 240px;
+  background: rgba(38, 24, 66, 0.97);
+  color: #e0e6f3;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  box-shadow: 2px 0 18px #6bd1e933;
+  z-index: 10;
+  transition: width 0.3s;
+}
+
+.sidebar h2 {
+  text-align: center;
+  padding: 28px 0 22px 0;
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #6bd1e933;
+  text-shadow: 0 0 10px #6bd1e944;
+}
+
+.sidebar h2 i {
+  margin-right: 10px;
+  color: #a16be9;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  border-bottom: 1px solid #3a2a6a;
+}
+
+.sidebar ul li a {
+  color: #e0e6f3;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 15px 24px;
+  font-size: 1.08rem;
+  border-radius: 8px 20px 20px 8px;
+  transition: background 0.22s, color 0.22s, box-shadow 0.22s;
+  position: relative;
+}
+
+.sidebar ul li a i {
+  margin-right: 14px;
+  font-size: 1.18rem;
+  color: #6bd1e9;
+  min-width: 22px;
+  text-align: center;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a:focus {
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  box-shadow: 0 4px 18px #a16be955;
+  outline: none;
+}
+
+.sidebar ul li a:hover i,
+.sidebar ul li a:focus i {
+  color: #2e1a47;
+}
+
+.sidebar ul li:last-child {
+  border-bottom: none;
+}
+
+/* Receipt Container */
+.receipt-container {
+  max-width: 480px;
+  margin: 48px auto 48px 290px;
+  background: rgba(255,255,255,0.97);
+  padding: 36px 28px 28px 28px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px #6bd1e955, 0 0 0 2px #a16be933;
+  animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(40px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.receipt-header h2 {
+  color: #6bd1e9;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  font-size: 2rem;
+  font-weight: 600;
+  text-shadow: 0 0 8px #a16be955;
+}
+
+.receipt-header small {
+  color: #888;
+  font-size: 1rem;
+}
+
+.receipt-details {
+  margin-bottom: 20px;
+  border-bottom: 1px dashed #a16be9;
+  padding-bottom: 16px;
+}
+
+.receipt-details div {
+  margin: 4px 0;
+  font-size: 1.05rem;
+  color: #2e1a47;
+}
+
+.receipt-summary {
+  margin-top: 18px;
+  padding: 12px 0;
+  border-top: 1px solid #e3e8f0;
+  border-bottom: 1px solid #e3e8f0;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.receipt-summary div {
+  margin: 6px 0;
+  font-size: 1.07rem;
+  color: #3a2a6a;
+}
+
+.receipt-total {
+  text-align: right;
+  font-size: 1.18rem;
+  color: #a16be9;
+  font-weight: bold;
+  margin-top: 12px;
+  text-shadow: 0 0 6px #6bd1e933;
+}
+
+.packs-list {
+  margin: 0 0 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.packs-list li {
+  background: #e9ecef;
+  margin-bottom: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 0.98rem;
+  color: #3a2a6a;
+  margin-right: 6px;
+  border: 1px solid #a16be933;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
+  align-items: center;
+}
+
+.action-btn {
+  background: linear-gradient(90deg, #6bd1e9 0%, #a16be9 100%);
+  color: #2e1a47;
+  border: none;
+  padding: 11px 26px;
+  border-radius: 8px;
+  font-size: 1.07rem;
+  cursor: pointer;
+  font-weight: 600;
+  min-width: 180px;
+  box-shadow: 0 4px 14px #6bd1e966;
+  transition: background 0.2s, color 0.2s, transform 0.18s, box-shadow 0.23s;
+}
+
+.action-btn[disabled] {
+  background: #aaa;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.action-btn:hover:enabled,
+.action-btn:focus:enabled {
+  background: linear-gradient(90deg, #a16be9 0%, #6bd1e9 100%);
+  color: #fff;
+  transform: scale(1.03) translateY(-2px);
+  box-shadow: 0 8px 24px #a16be988;
+  outline: none;
+}
+
+.success-message {
+  color: #27ae60;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 16px;
+  font-size: 1.13rem;
+  display: none;
+}
+
+#message {
+  color: #e74c3c;
+  text-align: center;
+  margin-top: 18px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  min-height: 22px;
+  transition: color 0.4s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+  }
+  .sidebar h2,
+  .sidebar ul li a span {
+    display: none;
+  }
+  .receipt-container {
+    margin-left: 90px;
+    padding: 24px 8px;
+  }
+}
+@media (max-width: 600px) {
+  .sidebar {
+    position: fixed;
+    width: 100vw;
+    min-width: 0;
+    height: 60px;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 14px #6bd1e933;
+    z-index: 15;
+  }
+  .sidebar h2 {
+    display: none;
+  }
+  .sidebar ul {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .sidebar ul li {
+    margin: 0;
+    border-bottom: none;
+  }
+  .sidebar ul li a {
+    border-radius: 10px;
+    padding: 0.5rem 0.5rem;
+    font-size: 1.08rem;
+  }
+  .receipt-container {
+    margin: 70px 0 0 0;
+    padding: 1.2rem 0.5rem;
+    max-width: 100vw;
+  }
+  .receipt-header h2 {
+    font-size: 1.3rem;
+  }
+  .btn-group { flex-direction: column; }
+}
+
+  </style>
+</head>
+<body>
+<!-- --- Sidebar --- -->
+<div class="sidebar">
+  <div>
+    <h2><i class="fas fa-broadcast-tower"></i> CABLE USER DASHBOARD</h2>
+    <ul>
+      <li><a href="userdashboard.html"><i class="fas fa-users"></i><span>Dashboard</span></a></li>
+      <li><a href="useraccount.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+      <li><a href="userbillings.html"><i class="fas fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+      <li><a href="userpackage.html"><i class="fas fa-sliders-h"></i> <span>Packages</span></a></li>
+      <li><a href="viewreceipts.html"><i class="fas fa-receipt"></i> <span>Your Receipts</span></a></li> 
+      <li><a href="usercomplaints.html"><i class="fas fa-comment-dots"></i> <span>Complaint Box</span></a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li> 
+    </ul>
+  </div>
+</div>
+  <div class="receipt-container" id="receipt">
+    <div class="receipt-header">
+      <h2>DTH Subscription Receipt</h2>
+      <small id="receiptDate"></small>
+    </div>
+    <div class="receipt-details" id="receiptDetails"></div>
+    <div class="receipt-summary" id="receiptSummary"></div>
+    <div class="receipt-total" id="receiptTotal"></div>
+    <div class="btn-group" id="btnGroup">
+      <button class="action-btn" id="rechargeBtn">Recharge Now</button>
+      <button class="action-btn" onclick="window.print()">Print Receipt</button>
+      <button class="action-btn" id="viewReceiptsBtn">View Receipts</button>
+    </div>
+    <div id="successMsg" class="success-message"></div>
+    <div id="message"></div>
+  </div>
+  <script>
+    let latestSubRecharged = false;
+
+    function durationText(d) {
+      if (d == 1) return 'Monthly';
+      if (d == 3) return 'Quarterly';
+      if (d == 12) return 'Yearly';
+      return d + ' months';
+    }
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '-';
+      return d.toISOString().substring(0, 10);
+    }
+    function formatCurrency(val) {
+      return '₹' + Number(val).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    async function fetchLatestSubscription() {
+      try {
+        const res = await fetch('/api/my-latest-subscription');
+        if (!res.ok) throw new Error('Not logged in or no subscriptions found');
+        const sub = await res.json();
+
+        latestSubRecharged = !!sub.recharged;
+
+        document.getElementById('receiptDate').textContent =
+          'Receipt Date: ' + formatDate(new Date());
+
+        document.getElementById('receiptDetails').innerHTML = `
+          <div><strong>Customer ID:</strong> ${sub.customerId || '-'}</div>
+          <div><strong>Name:</strong> ${sub.name || '-'}</div>
+          <div><strong>DTH Provider:</strong> ${sub.provider || '-'}</div>
+          <div><strong>Subscription Duration:</strong> ${durationText(sub.duration)}</div>
+          <div><strong>Start Date:</strong> ${formatDate(sub.startDate)}</div>
+          <div><strong>End Date:</strong> ${formatDate(sub.endDate)}</div>
+          <div><strong>Packs:</strong>
+            <ul class="packs-list">
+              ${(Array.isArray(sub.packs) && sub.packs.length) ? sub.packs.map(p => `<li>${p}</li>`).join('') : '<li>None</li>'}
+            </ul>
+          </div>
+        `;
+
+        // Calculate GST and grand total
+        const total = Number(sub.total || 0);
+        const gst = total * 0.18;
+        const grandTotal = total + gst;
+
+        document.getElementById('receiptSummary').innerHTML = `
+          <div><strong>Total (before GST):</strong> ${formatCurrency(total)}</div>
+          <div><strong>GST (18%):</strong> ${formatCurrency(gst)}</div>
+        `;
+        document.getElementById('receiptTotal').innerHTML =
+          `Grand Total: ${formatCurrency(grandTotal)}`;
+
+        document.getElementById('message').textContent = '';
+
+        // If already recharged, disable the Recharge button and show info
+        if (latestSubRecharged) {
+          document.getElementById('rechargeBtn').disabled = true;
+          document.getElementById('rechargeBtn').textContent = 'Already Recharged';
+          document.getElementById('message').textContent =
+            'This subscription is already recharged. You can view your receipt in the Receipts section.';
+        } else {
+          document.getElementById('rechargeBtn').disabled = false;
+          document.getElementById('rechargeBtn').textContent = 'Recharge Now';
+          document.getElementById('message').textContent = '';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = 'No subscription receipt found. Please subscribe first.';
+        document.getElementById('receiptDetails').innerHTML = '';
+        document.getElementById('receiptSummary').innerHTML = '';
+        document.getElementById('receiptTotal').innerHTML = '';
+        document.getElementById('btnGroup').style.display = 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchLatestSubscription();
+
+      document.getElementById('rechargeBtn').addEventListener('click', async function() {
+        if (latestSubRecharged) return;
+        const msg = document.getElementById('successMsg');
+        try {
+          const res = await fetch('/api/mark-recharged', { method: 'POST', credentials: 'include' });
+          if (res.ok) {
+            msg.textContent = 'Recharge Successful!';
+            msg.style.display = 'block';
+            document.getElementById('rechargeBtn').disabled = true;
+            document.getElementById('rechargeBtn').textContent = 'Already Recharged';
+            latestSubRecharged = true;
+            document.getElementById('message').textContent =
+              'This subscription is already recharged. You can view your receipt in the Receipts section.';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+          } else {
+            msg.textContent = 'Recharge failed!';
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+          }
+        } catch (err) {
+          msg.textContent = 'Recharge failed!';
+          msg.style.display = 'block';
+          setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+      });
+
+      document.getElementById('viewReceiptsBtn').addEventListener('click', function() {
+        window.location.href = 'viewreceipts.html';
+      });
+    });
+
+    
+  </script>
+</body>
+</html>

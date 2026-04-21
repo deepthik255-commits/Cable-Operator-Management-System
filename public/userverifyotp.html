@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify OTP</title>
+</head>
+<body>
+  <h2>Enter OTP</h2>
+  <form id="otpForm">
+    <label>OTP:</label>
+    <input type="text" name="otp" required maxlength="6" />
+    <button type="submit">Verify</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    document.getElementById('otpForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = localStorage.getItem('email');
+      const otp = this.otp.value;
+
+      const res = await fetch('/user/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      document.getElementById('message').textContent = data.message;
+
+      if (res.ok) {
+        localStorage.setItem('otp', otp);
+        window.location.href = 'userresetpassword.html';
+      }
+    });
+  </script>
+</body>
+</html>

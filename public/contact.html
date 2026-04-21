@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | SB Cable Operator Network</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #232526, #414345);
+            color: #fff;
+            min-height: 100vh;
+            margin: 0;
+        }
+        header {
+            width: 100%;
+            background: rgba(34, 40, 49, 0.98);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 30px 18px 30px;
+        }
+        #logo {
+            width: 54px;
+            height: 54px;
+            background: url('logo.png') no-repeat center center/cover;
+            border-radius: 50%;
+            margin-right: 18px;
+            background-color: #00e1ff33;
+        }
+        .header-title {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #00e1ff;
+            letter-spacing: 2px;
+            text-shadow: 1px 2px 6px #111;
+            margin-right: 32px;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.08rem;
+            padding: 7px 18px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        nav ul li a:hover,
+        nav ul li a.active {
+            background: #00e1ff;
+            color: #232526;
+        }
+        @media (max-width: 700px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px 10px;
+            }
+            .header-title {
+                margin: 12px 0 10px 0;
+                font-size: 1.2rem;
+            }
+            nav ul {
+                gap: 10px;
+            }
+        }
+        .container {
+            max-width: 900px;
+            margin: 48px auto 0 auto;
+            background: rgba(20, 22, 25, 0.97);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.25);
+            padding: 40px 35px 30px 35px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            color: #00e1ff;
+            margin-bottom: 18px;
+            text-shadow: 1px 2px 6px #111;
+        }
+        .contact-details {
+            margin-bottom: 30px;
+        }
+        .contact-details p {
+            margin-bottom: 7px;
+            font-size: 1.08rem;
+        }
+        .contact-details strong {
+            color: #ffb300;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        label {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        input, textarea {
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 1rem;
+            background: #232526;
+            color: #fff;
+            margin-top: 2px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.2s;
+        }
+        input:focus, textarea:focus {
+            background: #30343b;
+            outline: 2px solid #00e1ff;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            background: #00e1ff;
+            color: #232526;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 1.09rem;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        button:hover {
+            background: #ffb300;
+            color: #232526;
+        }
+        .footer {
+            border-top: 1px solid #444;
+            margin-top: 30px;
+            padding-top: 18px;
+            color: #b6c2c9;
+            font-size: 1.04rem;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 8px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <div style="display: flex; align-items: center;">
+            <span class="header-title">WELCOME TO SB CABLE NETWORKS</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <h1>Contact Us</h1>
+    <div class="contact-details">
+        <p><strong>Address:</strong> Girijannavar Galli, Savadatti Yallamma, Karnataka 591126</p>
+        <p><strong>Phone:</strong> +91 6361383280</p>
+        <p><strong>Email:</strong> <a href="mailto:sbcablenk@gmail.com" style="color:#00e1ff;">sbcablenk@gmail.com</a></p>
+        <p><strong>Customer Care:</strong> 9743-924-665 (Toll Free)</p>
+    </div>
+    <div class="footer">
+        We look forward to assisting you! <br>
+        &copy; 2025 SB Cable Operator Network. All rights reserved.
+    </div>
+</div>
+</body>
+</html>

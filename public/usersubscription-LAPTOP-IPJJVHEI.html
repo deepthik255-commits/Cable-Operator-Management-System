@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DTH Subscription</title>
+</head>
+<body>
+  <h2>Select DTH Provider and Package</h2>
+  <div id="packages"></div>
+
+  <script>
+    async function fetchPackages() {
+      const res = await fetch('/getDthPackages');
+      const data = await res.json();
+
+      const container = document.getElementById('packages');
+      data.forEach(pack => {
+        const card = document.createElement('div');
+        card.innerHTML = `
+          <h3>${pack.provider} - ${pack.packName}</h3>
+          <p>Price: ₹${pack.price}</p>
+          <p>Channels: ${pack.channels.join(', ')}</p>
+          <button onclick="subscribe('${pack._id}')">Subscribe</button>
+          <hr>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function subscribe(packId) {
+      const res = await fetch('/subscribePackage', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ packId })
+      });
+      const msg = await res.text();
+      alert(msg);
+    }
+
+    fetchPackages();
+  </script>
+</body>
+</html>

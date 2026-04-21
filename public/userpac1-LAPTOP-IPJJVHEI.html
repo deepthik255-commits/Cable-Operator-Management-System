@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DTH Package Selection</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; }
+    .container { max-width: 600px; margin: 30px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #aaa; }
+    h2 { text-align: center; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; }
+    select, input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+    .packs-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .pack-card { flex: 1 0 45%; background: #e9ecef; border-radius: 5px; padding: 10px; margin-bottom: 10px; }
+    .summary { background: #f8f9fa; border-radius: 5px; padding: 14px; margin-top: 18px; }
+    .btn { background: #007bff; color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; }
+    .btn:disabled { background: #aaa; }
+    .message { margin-top: 16px; text-align: center; }
+    .message.success { color: green; }
+    .message.error { color: red; }
+    input[readonly] { background: #e9ecef; color: #333; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Select Your DTH Package</h2>
+    <form id="dthForm">
+      <!-- Customer Info (readonly) -->
+      <div class="form-group">
+        <label for="customerId">Customer ID</label>
+        <input type="text" id="customerId" name="customerId" readonly>
+      </div>
+      <div class="form-group">
+        <label for="name">Customer Name</label>
+        <input type="text" id="name" name="name" readonly>
+      </div>
+      <!-- Provider -->
+      <div class="form-group">
+        <label for="provider">DTH Provider</label>
+        <select id="provider" required>
+          <option value="">-- Select Provider --</option>
+        </select>
+      </div>
+      <!-- Duration -->
+      <div class="form-group">
+        <label for="duration">Subscription Duration</label>
+        <select id="duration" required>
+          <option value="1">Monthly</option>
+          <option value="3">Quarterly</option>
+          <option value="12">Yearly</option>
+        </select>
+      </div>
+      <!-- Start Date -->
+      <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" id="startDate" name="startDate" required>
+      </div>
+      <!-- End Date -->
+      <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="text" id="endDate" name="endDate" readonly>
+      </div>
+      <!-- Packs -->
+      <div class="form-group">
+        <label>Channel Packs</label>
+        <div class="packs-list" id="packsList"></div>
+      </div>
+      <!-- Summary -->
+      <div class="summary" id="summary"></div>
+      <button type="submit" class="btn">Submit</button>
+      <div class="message" id="formMessage"></div>
+    </form>
+  </div>
+  <script>
+    // Provider and pack data
+    const providers = [
+      { name: "Tata Play", base: 150 },
+      { name: "Airtel Digital TV", base: 160 },
+      { name: "Dish TV", base: 140 },
+      { name: "Sun Direct", base: 130 }
+    ];
+    const packs = [
+      { name: "Basic", price: 50, desc: "All Free-to-Air channels" },
+      { name: "HD Pack", price: 100, desc: "Popular HD channels" },
+      { name: "Sports Pack", price: 60, desc: "All sports channels" },
+      { name: "Kids Pack", price: 30, desc: "Kids entertainment" },
+      { name: "English Movies", price: 40, desc: "Hollywood blockbusters" },
+      { name: "Hindi Movies", price: 35, desc: "Latest Bollywood" },
+      { name: "Regional Pack", price: 25, desc: "Regional language channels" }
+    ];
+
+    // DOM elements
+    const providerEl = document.getElementById('provider');
+    const durationEl = document.getElementById('duration');
+    const packsListEl = document.getElementById('packsList');
+    const summaryEl = document.getElementById('summary');
+    const form = document.getElementById('dthForm');
+    const formMessage = document.getElementById('formMessage');
+    const customerIdEl = document.getElementById('customerId');
+    const nameEl = document.getElementById('name');
+    const startDateEl = document.getElementById('startDate');
+    const endDateEl = document.getElementById('endDate');
+
+    // Set min start date as today
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    startDateEl.min = todayStr;
+    startDateEl.value = todayStr;
+
+    // Populate providers
+    providers.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.name;
+      opt.textContent = `${p.name} (₹${p.base}/mo)`;
+      providerEl.appendChild(opt);
+    });
+
+    // Populate packs
+    packs.forEach((p, idx) => {
+      const div = document.createElement('div');
+      div.className = 'pack-card';
+      div.innerHTML = `
+        <label>
+          <input type="checkbox" value="${p.name}" data-price="${p.price}">
+          <strong>${p.name}</strong> (₹${p.price}/mo)<br>
+          <small>${p.desc}</small>
+        </label>
+      `;
+      packsListEl.appendChild(div);
+    });
+
+    // Helper: get selected packs
+    function getSelectedPacks() {
+      return Array.from(packsListEl.querySelectorAll('input[type=checkbox]:checked'))
+        .map(cb => ({
+          name: cb.value,
+          price: Number(cb.getAttribute('data-price'))
+        }));
+    }
+
+    // Helper: get selected provider
+    function getSelectedProvider() {
+      const name = providerEl.value;
+      return providers.find(p => p.name === name);
+    }
+
+    // Helper: update summary
+    function updateSummary() {
+  const provider = getSelectedProvider();
+  const duration = Number(durationEl.value);
+  const selectedPacks = getSelectedPacks();
+  const startDate = startDateEl.value;
+  const endDate = endDateEl.value;
+
+  if (!provider) {
+    summaryEl.innerHTML = '<em>Please select a provider.</em>';
+    return;
+  }
+  let packsTotal = selectedPacks.reduce((sum, p) => sum + p.price, 0);
+  let base = provider.base;
+  let total = (base + packsTotal) * duration;
+  let gst = total * 0.18;
+  let grandTotal = total + gst;
+
+  summaryEl.innerHTML = `
+    <strong>Provider:</strong> ${provider.name}<br>
+    <strong>Duration:</strong> ${duration === 1 ? 'Monthly' : duration === 3 ? 'Quarterly' : 'Yearly'}<br>
+    <strong>Packs:</strong> ${selectedPacks.length ? selectedPacks.map(p => p.name).join(', ') : 'None'}<br>
+    <strong>Start Date:</strong> ${startDate ? startDate : '-'}<br>
+    <strong>End Date:</strong> ${endDate ? endDate : '-'}<br>
+    <strong>Total (before GST):</strong> ₹${total}<br>
+    <strong>GST (18%):</strong> ₹${gst.toFixed(2)}<br>
+    <strong>Grand Total:</strong> <span style="color:green">₹${grandTotal.toFixed(2)}</span>
+  `;
+}
+
+
+    // Date calculation logic
+    function calculateEndDate() {
+      const startDateStr = startDateEl.value;
+      const duration = parseInt(durationEl.value);
+      if (!startDateStr || !duration) {
+        endDateEl.value = '';
+        return;
+      }
+      const startDate = new Date(startDateStr);
+      // Add months according to duration
+      const endDate = new Date(startDate);
+      endDate.setMonth(endDate.getMonth() + duration);
+      // Subtract one day to make end date inclusive
+      endDate.setDate(endDate.getDate() - 1);
+      endDateEl.value = endDate.toISOString().split('T')[0];
+    }
+
+    // Fetch current user info from backend
+    async function fetchUserInfo() {
+      try {
+        const res = await fetch('/getUserDetails', { credentials: 'include' });
+        if (res.ok) {
+          const user = await res.json();
+          customerIdEl.value = user.customerId || '';
+          nameEl.value = user.name || '';
+        } else {
+          customerIdEl.value = '';
+          nameEl.value = '';
+          formMessage.textContent = "Please log in to subscribe.";
+          formMessage.className = "message error";
+        }
+      } catch (err) {
+        customerIdEl.value = '';
+        nameEl.value = '';
+        formMessage.textContent = "Error fetching user info.";
+        formMessage.className = "message error";
+      }
+    }
+
+    // Event listeners
+    providerEl.addEventListener('change', updateSummary);
+    durationEl.addEventListener('change', () => {
+      updateSummary();
+      calculateEndDate();
+    });
+    packsListEl.addEventListener('change', updateSummary);
+    startDateEl.addEventListener('change', calculateEndDate);
+
+    // Initial summary, user info, and end date
+    fetchUserInfo();
+    updateSummary();
+    calculateEndDate();
+
+    // Form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formMessage.textContent = '';
+      formMessage.className = 'message';
+
+      const provider = providerEl.value;
+      const duration = Number(durationEl.value);
+      const selectedPacks = getSelectedPacks();
+      const packsArr = selectedPacks.map(p => p.name);
+      const startDate = startDateEl.value;
+      const endDate = endDateEl.value;
+
+      if (!customerIdEl.value || !nameEl.value) {
+        formMessage.textContent = 'User info not loaded. Please log in.';
+        formMessage.classList.add('error');
+        return;
+      }
+      if (!provider) {
+        formMessage.textContent = 'Please select a provider.';
+        formMessage.classList.add('error');
+        return;
+      }
+      if (!packsArr.length) {
+        formMessage.textContent = 'Please select at least one pack.';
+        formMessage.classList.add('error');
+        return;
+      }
+      if (!startDate || !endDate) {
+        formMessage.textContent = 'Please select a valid start date.';
+        formMessage.classList.add('error');
+        return;
+      }
+
+      // Calculate total (before GST)
+      const providerObj = getSelectedProvider();
+      const packsTotal = selectedPacks.reduce((sum, p) => sum + p.price, 0);
+      const total = String((providerObj.base + packsTotal) * duration);
+
+      // Send to backend (customerId and name are NOT sent, backend gets from session)
+      try {
+        const res = await fetch('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            provider,
+            duration,
+            packs: packsArr,
+            startDate,
+            endDate,
+            total
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          formMessage.textContent = data.message;
+          formMessage.classList.add('success');
+          form.reset();
+          // Reset start date to today and recalculate end date
+          startDateEl.value = todayStr;
+          calculateEndDate();
+          updateSummary();
+          fetchUserInfo(); // reload user info after reset
+        } else {
+          formMessage.textContent = data.message || 'Submission failed.';
+          formMessage.classList.add('error');
+        }
+      } catch (err) {
+        formMessage.textContent = 'Network or server error.';
+        formMessage.classList.add('error');
+      }
+    });
+
+  </script>
+</body>
+</html>
